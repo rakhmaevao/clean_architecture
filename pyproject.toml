@@ -9,6 +9,7 @@ packages = [{include = "clean_architecture"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 pydeps = "^1.12.12"
+tomli = "^2.0.1"
 
 
 [build-system]
