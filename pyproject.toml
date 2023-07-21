@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "clean-architecture"
+version = "0.1.0"
+description = ""
+authors = ["Александр Рахмаев <rahmaevao@engee.cloud>"]
+readme = "README.md"
+packages = [{include = "clean_architecture"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydeps = "^1.12.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
