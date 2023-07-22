@@ -3,3 +3,6 @@ test:
 
 format:
 	poetry run black .
+
+up:
+	poetry run python main.py

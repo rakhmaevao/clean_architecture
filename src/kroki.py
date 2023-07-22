@@ -17,3 +17,8 @@ def draw_plantuml(code: str):
     if response.status_code != 200:
         raise RuntimeError(f"Request GET failed {response.content}")
     return response.content
+
+
+def save_svg(file_path: str, svg: bytes):
+    with open(file_path, "wb") as f:
+        f.write(svg)
