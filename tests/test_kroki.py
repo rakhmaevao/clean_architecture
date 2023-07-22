@@ -3,13 +3,6 @@ from src.kroki import draw_plantuml
 
 def test_draw_plantuml():
     assert (
-        draw_plantuml(
-            """
-                        [First component]
-    [Another component] as Comp2
-    component Comp3
-    component [Last\ncomponent] as Comp4
-                    """
-        )
-        == ""
+        draw_plantuml("class Машина")
+        == b'<?xml version="1.0" encoding="us-ascii" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" height="69px" preserveAspectRatio="none" style="width:112px;height:69px;background:#FFFFFF;" version="1.1" viewBox="0 0 112 69" width="112px" zoomAndPan="magnify"><defs/><g><!--class ??????--><g id="elem_&#1052;&#1072;&#1096;&#1080;&#1085;&#1072;"><rect codeLine="1" fill="#F1F1F1" height="48" id="&#1052;&#1072;&#1096;&#1080;&#1085;&#1072;" rx="2.5" ry="2.5" style="stroke:#181818;stroke-width:0.5;" width="91" x="7" y="7"/><ellipse cx="22" cy="23" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1.0;"/><path d="M24.9688,28.6406 Q24.3906,28.9375 23.75,29.0781 Q23.1094,29.2344 22.4063,29.2344 Q19.9063,29.2344 18.5781,27.5938 Q17.2656,25.9375 17.2656,22.8125 Q17.2656,19.6875 18.5781,18.0313 Q19.9063,16.375 22.4063,16.375 Q23.1094,16.375 23.75,16.5313 Q24.4063,16.6875 24.9688,16.9844 L24.9688,19.7031 Q24.3438,19.125 23.75,18.8594 Q23.1563,18.5781 22.5313,18.5781 Q21.1875,18.5781 20.5,19.6563 Q19.8125,20.7188 19.8125,22.8125 Q19.8125,24.9063 20.5,25.9844 Q21.1875,27.0469 22.5313,27.0469 Q23.1563,27.0469 23.75,26.7813 Q24.3438,26.5 24.9688,25.9219 L24.9688,28.6406 Z " fill="#000000"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="59" x="36" y="27.8467">&#1052;&#1072;&#1096;&#1080;&#1085;&#1072;</text><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="97" y1="39" y2="39"/><line style="stroke:#181818;stroke-width:0.5;" x1="8" x2="97" y1="47" y2="47"/></g><!--SRC=[Iyv9B2vMk33dmeQB7HTsNDXxOGC0]--></g></svg>'
     )
