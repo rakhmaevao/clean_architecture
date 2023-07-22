@@ -17,18 +17,29 @@ for component_name, component in components.items():
 for key in rejection_keys:
     del components[key]
 
+print("rejected", rejection_keys)
 
-for component_name, component in components.items():
-    for i in component.get('imports', []):
-        if i in rejection_keys:
-            component['imports'].remove(i)
+for _, component in components.items():
+    if "imports" not in component.keys():
+        continue
+    imported_components = set(component["imports"])
+    imported_components.difference_update(rejection_keys)
+    component["imports"] = list(imported_components)
+
+    if "imported_by" not in component.keys():
+        continue
+    parent_components = set(component["imported_by"])
+    parent_components.difference_update(rejection_keys)
+    component["imported_by"] = list(parent_components)
+
+print("DDDDD", components)
 
 plant_uml_code = "skinparam componentStyle uml1\n"
 for _, component in components.items():
-    plant_uml_code += f"component [{component['name']}] as {component['name']}\n"
+    plant_uml_code += f"component [{component['name']}\\nI={len(component.get('imports', []))/(len(component.get('imported_by', [])) + len(component.get('imports', [])))}] as {component['name']}\n"
 
 for _, component in components.items():
-    for import_comp in  component.get("imports", []):
+    for import_comp in component.get("imports", []):
         plant_uml_code += f"{component['name']} --> {import_comp}\n"
 
 svg = draw_plantuml(plant_uml_code)
@@ -46,41 +57,22 @@ app.layout = html.Div(
 if __name__ == "__main__":
     app.run(debug=True)
 
+{'src.routes', 'src.services', 'src.routes.version', 'src.services.user_data', 'src.services.version', 'src', 'src.routes.bugreports', 'src.services.bugreports'}
 
 {
     "main.py": {
         "bacon": 0,
-        "imports": ["src", "src.app", "src.config"],
+        "imports": ["src.app", "src.config"],
         "name": "main.py",
         "path": None,
-    },
-    "src": {
-        "bacon": 1,
-        "imported_by": [
-            "main.py",
-            "src.app",
-            "src.routes.bugreports.dependencies",
-            "src.routes.bugreports.v1",
-            "src.routes.version.models",
-            "src.routes.version.v1",
-            "src.services.bugreports.bugreports",
-            "src.services.user_data.user_data",
-            "src.services.version.version",
-            "src.services.version.version_service",
-        ],
-        "name": "src",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/__init__.py",
     },
     "src.app": {
         "bacon": 1,
         "imported_by": ["main.py"],
         "imports": [
-            "src",
             "src.config",
-            "src.routes",
             "src.routes.bugreports",
             "src.routes.bugreports.v1",
-            "src.routes.version",
             "src.routes.version.v1",
         ],
         "name": "src.app",
@@ -101,26 +93,11 @@ if __name__ == "__main__":
         "name": "src.config",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/config.py",
     },
-    "src.routes": {
-        "bacon": 2,
-        "imported_by": ["src.app"],
-        "name": "src.routes",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/__init__.py",
-    },
-    "src.routes.bugreports": {
-        "bacon": 2,
-        "imported_by": ["src.app"],
-        "imports": ["src.routes.bugreports.v1"],
-        "name": "src.routes.bugreports",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/bugreports/__init__.py",
-    },
     "src.routes.bugreports.dependencies": {
         "bacon": 3,
         "imported_by": ["src.routes.bugreports.v1"],
         "imports": [
-            "src",
             "src.services",
-            "src.services.user_data",
             "src.services.user_data.models",
             "src.services.user_data.user_data",
         ],
@@ -137,36 +114,21 @@ if __name__ == "__main__":
         "bacon": 2,
         "imported_by": ["src.app", "src.routes.bugreports"],
         "imports": [
-            "src",
             "src.config",
             "src.routes.bugreports.dependencies",
             "src.routes.bugreports.models",
-            "src.services",
             "src.services.bugreports",
             "src.services.bugreports.bugreports",
             "src.services.bugreports.models",
-            "src.services.user_data",
             "src.services.user_data.models",
         ],
         "name": "src.routes.bugreports.v1",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/bugreports/v1.py",
     },
-    "src.routes.version": {
-        "bacon": 2,
-        "imported_by": ["src.app"],
-        "imports": ["src.routes.version.v1"],
-        "name": "src.routes.version",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/version/__init__.py",
-    },
     "src.routes.version.models": {
         "bacon": 3,
         "imported_by": ["src.routes.version.v1"],
-        "imports": [
-            "src",
-            "src.services",
-            "src.services.version",
-            "src.services.version.models",
-        ],
+        "imports": ["src.services", "src.services.version.models"],
         "name": "src.routes.version.models",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/version/models.py",
     },
@@ -174,10 +136,8 @@ if __name__ == "__main__":
         "bacon": 2,
         "imported_by": ["src.app", "src.routes.version"],
         "imports": [
-            "src",
             "src.config",
             "src.routes.version.models",
-            "src.services",
             "src.services.version",
             "src.services.version.exceptions",
             "src.services.version.models",
@@ -187,36 +147,11 @@ if __name__ == "__main__":
         "name": "src.routes.version.v1",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/routes/version/v1.py",
     },
-    "src.services": {
-        "bacon": 3,
-        "imported_by": [
-            "src.routes.bugreports.dependencies",
-            "src.routes.bugreports.v1",
-            "src.routes.version.models",
-            "src.routes.version.v1",
-            "src.services.bugreports.bugreports",
-            "src.services.user_data.user_data",
-            "src.services.version.version_service",
-        ],
-        "name": "src.services",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/__init__.py",
-    },
-    "src.services.bugreports": {
-        "bacon": 3,
-        "imported_by": [
-            "src.routes.bugreports.v1",
-            "src.services.bugreports.bugreports",
-        ],
-        "name": "src.services.bugreports",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/bugreports/__init__.py",
-    },
     "src.services.bugreports.bugreports": {
         "bacon": 3,
         "imported_by": ["src.routes.bugreports.v1"],
         "imports": [
-            "src",
             "src.config",
-            "src.services",
             "src.services.bugreports",
             "src.services.bugreports.models",
         ],
@@ -232,16 +167,6 @@ if __name__ == "__main__":
         "name": "src.services.bugreports.models",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/bugreports/models.py",
     },
-    "src.services.user_data": {
-        "bacon": 3,
-        "imported_by": [
-            "src.routes.bugreports.dependencies",
-            "src.routes.bugreports.v1",
-            "src.services.user_data.user_data",
-        ],
-        "name": "src.services.user_data",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/user_data/__init__.py",
-    },
     "src.services.user_data.models": {
         "bacon": 3,
         "imported_by": [
@@ -256,24 +181,12 @@ if __name__ == "__main__":
         "bacon": 4,
         "imported_by": ["src.routes.bugreports.dependencies"],
         "imports": [
-            "src",
             "src.config",
-            "src.services",
             "src.services.user_data",
             "src.services.user_data.models",
         ],
         "name": "src.services.user_data.user_data",
         "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/user_data/user_data.py",
-    },
-    "src.services.version": {
-        "bacon": 3,
-        "imported_by": [
-            "src.routes.version.models",
-            "src.routes.version.v1",
-            "src.services.version.version_service",
-        ],
-        "name": "src.services.version",
-        "path": "/home/rahmaevao/Projects/konoha/administrator/src/services/version/__init__.py",
     },
     "src.services.version.exceptions": {
         "bacon": 3,
@@ -296,7 +209,6 @@ if __name__ == "__main__":
         "bacon": 3,
         "imported_by": ["src.routes.version.v1"],
         "imports": [
-            "src",
             "src.config",
             "src.services.version.models",
             "src.services.version.version_service",
@@ -308,9 +220,7 @@ if __name__ == "__main__":
         "bacon": 3,
         "imported_by": ["src.routes.version.v1", "src.services.version.version"],
         "imports": [
-            "src",
             "src.config",
-            "src.services",
             "src.services.version",
             "src.services.version.models",
         ],
