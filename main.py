@@ -2,7 +2,6 @@ from src.kroki import draw_plantuml, save_svg
 from src.plantuml_coder import to_plantuml
 from src.micro_service import MicroService
 import plotly.express as px
-import statistics
 from dash import Dash, html, dcc
 from loguru import logger
 
