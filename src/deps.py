@@ -6,7 +6,7 @@ import tomli
 def get_deps(srv_path: str) -> dict:
     used_libs = _read_used_libraries(srv_path)
     result = subprocess.run(
-        f"poetry run pydeps {srv_path}/main.py --max-bacon=10  --exclude {' '.join(used_libs)} --show-deps --noshow --no-output",
+        f"poetry run pydeps {srv_path}/main.py --max-bacon=0  --exclude {' '.join(used_libs)} --show-deps --noshow --no-output",
         shell=True,
         capture_output=True,
         encoding="utf-8",

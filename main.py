@@ -4,11 +4,12 @@ from src.micro_service import MicroService
 import plotly.express as px
 import statistics
 from dash import Dash, html, dcc
+from loguru import logger
 
 
-micro_service = MicroService("/home/rahmaevao/Projects/konoha/administrator")
-# micro_service = MicroService("/home/rahmaevao/Projects/konoha/filesystem")
-
+# micro_service = MicroService("/home/rahmaevao/Projects/konoha/administrator")
+micro_service = MicroService("/home/rahmaevao/Projects/konoha/filesystem")
+logger.info(f"components: {micro_service.components}")
 
 svg = draw_plantuml(to_plantuml(micro_service.components))
 save_svg(file_path="assets/components_diagrams.svg", svg=svg)
