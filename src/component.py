@@ -2,7 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 from typing import TypeAlias
-
+from pathlib import Path
 from loguru import logger
 from .finder import num_occurrences
 
@@ -15,6 +15,7 @@ class Component:
     path: str
     imports: list[CompName]
     imported_by: list[CompName]
+    service_path: str
 
     def __post_init__(self):
         # Удаление таких импортов, которые определяются таковыми,
@@ -32,12 +33,13 @@ class Component:
         logger.info(f"Импорты для {self.name}: {self.imports}")
 
     @classmethod
-    def from_dict(cls, data: dict) -> Component:
+    def from_dict(cls, data: dict, service_path: str) -> Component:
         return cls(
             name=data["name"],
             path=data["path"],
             imports=data.get("imports", []),
             imported_by=data.get("imported_by", []),
+            service_path=service_path,
         )
 
     @cached_property
@@ -61,4 +63,13 @@ class Component:
         return abs(self.instability + self.abstractness - 1)
 
     def __str__(self) -> str:
-        return f"{self.name} \\n I = {self.instability} \\n A = {self.abstractness}"
+        if self.path is None:
+            path = self.name
+        else:
+            path = Path(self.path).relative_to(Path(self.service_path))
+        return (
+            f"{self.name} \\n"
+            f"Path: {self.path} \\n"
+            f"I = {self.instability} \\n"
+            f"A = {self.abstractness}"
+        )

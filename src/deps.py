@@ -6,7 +6,7 @@ import tomli
 def get_deps(srv_path: str) -> dict:
     used_libs = _read_used_libraries(srv_path)
     result = subprocess.run(
-        f"poetry run pydeps {srv_path}/main.py --max-bacon=0  --exclude {' '.join(used_libs)} --show-deps --noshow --no-output",
+        f"poetry run pydeps {srv_path}/main.py --max-bacon=1000  --exclude {' '.join(used_libs)} --show-deps --noshow --no-output",
         shell=True,
         capture_output=True,
         encoding="utf-8",
@@ -21,4 +21,8 @@ def get_deps(srv_path: str) -> dict:
 def _read_used_libraries(srv_path: str) -> list[str]:
     with open(f"{srv_path}/pyproject.toml", "rb") as f:
         pyproject_toml = tomli.load(f)
-    return pyproject_toml["tool"]["poetry"]["dependencies"].keys()
+    base_pkgs = list(pyproject_toml["tool"]["poetry"]["dependencies"].keys())
+    dev_pkgs = list(
+        pyproject_toml["tool"]["poetry"]["group"]["dev"]["dependencies"].keys()
+    )
+    return base_pkgs + dev_pkgs
