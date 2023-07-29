@@ -1,10 +1,12 @@
 import subprocess
 import json
 import tomli
+from functools import lru_cache
+import sys
 
 
 def get_deps(srv_path: str) -> dict:
-    used_libs = _read_used_libraries(srv_path)
+    used_libs = read_used_libraries(srv_path)
     result = subprocess.run(
         f"poetry run pydeps {srv_path}/main.py --max-bacon=1000  --exclude {' '.join(used_libs)} --show-deps --noshow --no-output",
         shell=True,
@@ -18,11 +20,12 @@ def get_deps(srv_path: str) -> dict:
     return json.loads(result.stdout)
 
 
-def _read_used_libraries(srv_path: str) -> list[str]:
+@lru_cache
+def read_used_libraries(srv_path: str) -> list[str]:
     with open(f"{srv_path}/pyproject.toml", "rb") as f:
         pyproject_toml = tomli.load(f)
     base_pkgs = list(pyproject_toml["tool"]["poetry"]["dependencies"].keys())
     dev_pkgs = list(
         pyproject_toml["tool"]["poetry"]["group"]["dev"]["dependencies"].keys()
     )
-    return base_pkgs + dev_pkgs
+    return base_pkgs + dev_pkgs + list(sys.stdlib_module_names)

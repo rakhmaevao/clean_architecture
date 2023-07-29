@@ -5,6 +5,8 @@ from typing import TypeAlias
 from pathlib import Path
 from loguru import logger
 from .finder import num_occurrences
+from .imports import get_imported_entities_by_modules
+from .deps import read_used_libraries
 
 CompName: TypeAlias = str
 
@@ -30,7 +32,24 @@ class Component:
                     self.imports.remove(imp_other)
                     break
 
-        logger.info(f"Импорты для {self.name}: {self.imports}")
+        if self.path is None:
+            self.path = f"{self.service_path}/main.py"
+
+        self.__entities = get_imported_entities_by_modules(self.path)
+        libs = read_used_libraries(self.service_path)
+        business_modules = []
+        for module in self.__entities.get_modules():
+            if module not in libs:
+                business_modules.append(module)
+        self.__fan_out = sum([len(self.__entities.get(e)) for e in business_modules])
+        self.__fan_in = 0
+        logger.info(f"Импорты для {self.name}: {self.imports} {self.__fan_out}")
+
+    def num_imported_entities_from_module(self, module_name) -> int:
+        return len(self.__entities.get(module_name))
+
+    def set_fan_in(self, fan_in: int) -> None:
+        self.__fan_in = fan_in
 
     @classmethod
     def from_dict(cls, data: dict, service_path: str) -> Component:
@@ -44,8 +63,9 @@ class Component:
 
     @cached_property
     def instability(self) -> float:
+        logger.info(f"INNNNNNNN {self.name} {self.__fan_out} {self.__fan_in}")
         try:
-            return len(self.imports) / (len(self.imported_by) + len(self.imports))
+            return self.__fan_out / (self.__fan_in + self.__fan_out)
         except ZeroDivisionError:
             return 0.0
 
