@@ -69,7 +69,7 @@ class Component:
             path = Path(self.path).relative_to(Path(self.service_path))
         return (
             f"{self.name} \\n"
-            f"Path: {self.path} \\n"
+            f"Path: {path} \\n"
             f"I = {self.instability} \\n"
             f"A = {self.abstractness}"
         )

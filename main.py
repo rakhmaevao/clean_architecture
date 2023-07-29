@@ -5,9 +5,9 @@ import plotly.express as px
 from dash import Dash, html, dcc
 from loguru import logger
 
-
+micro_service = MicroService("/home/rahmaevao/Projects/konoha/blocks")
 # micro_service = MicroService("/home/rahmaevao/Projects/konoha/administrator")
-micro_service = MicroService("/home/rahmaevao/Projects/konoha/filesystem")
+# micro_service = MicroService("/home/rahmaevao/Projects/konoha/filesystem")
 logger.info(f"components: {micro_service.components}")
 
 svg = draw_plantuml(to_plantuml(micro_service.components))
