@@ -1,5 +1,6 @@
 import subprocess
 import json
+from loguru import logger
 import tomli
 from functools import lru_cache
 import sys
@@ -22,10 +23,16 @@ def get_deps(srv_path: str) -> dict:
 
 @lru_cache
 def read_used_libraries(srv_path: str) -> list[str]:
-    with open(f"{srv_path}/pyproject.toml", "rb") as f:
-        pyproject_toml = tomli.load(f)
-    base_pkgs = list(pyproject_toml["tool"]["poetry"]["dependencies"].keys())
-    dev_pkgs = list(
-        pyproject_toml["tool"]["poetry"]["group"]["dev"]["dependencies"].keys()
-    )
-    return base_pkgs + dev_pkgs + list(sys.stdlib_module_names)
+    with open(f"{srv_path}/poetry.lock", "rb") as f:
+        poetry_lock = tomli.load(f)["package"]
+    pkgs = [pkg["name"].replace("-", "_") for pkg in poetry_lock]
+    libs = pkgs + list(sys.stdlib_module_names)
+    logger.info(f"Libs: {libs}")
+    return libs
+
+
+def is_lib(module_name, srv_path) -> bool:
+    libs = read_used_libraries(srv_path)
+    if module_name.split(".")[0] in libs:
+        return True
+    return False

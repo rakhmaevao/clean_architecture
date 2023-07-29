@@ -11,6 +11,7 @@ class MicroService:
         }
         for comp in self.__components.values():
             comp.set_fan_in(self.__compute_fan_in(comp))
+            comp.set_external_used_entities(self.__compute_external_used_entities(comp))
 
     def __compute_fan_in(self, component: Component) -> int:
         logger.info(f"CoM {component.name} {component.imported_by}")
@@ -21,6 +22,16 @@ class MicroService:
             ].num_imported_entities_from_module(component.name)
         logger.info(f"fan_in {fan_in}")
         return fan_in
+
+    def __compute_external_used_entities(self, component: Component) -> int:
+        logger.info(f"CoM {component.name} {component.imported_by}")
+        external_used_entities = []
+        for dependent_component_name in component.imported_by:
+            external_used_entities += self.components[
+                dependent_component_name
+            ].imported_entities_from_module(component.name)
+        logger.info(f"external_used_entities {external_used_entities}")
+        return external_used_entities
 
     @property
     def components(self) -> dict[CompName, Component]:
