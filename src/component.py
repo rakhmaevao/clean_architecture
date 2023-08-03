@@ -45,20 +45,23 @@ class Component:
             self.__imported_entities.update(self.__entities.get(i_e))
         self.__fan_out = sum([len(self.__entities.get(e)) for e in business_modules])
         self.__fan_in = 0
-        self.__external_used_entities = []
-        logger.info(f"Импорты для {self.name}: {self.imports} {self.__fan_out}")
+        self.__external_used_entities = set()
 
     def num_imported_entities_from_module(self, module_name) -> int:
         return len(self.__entities.get(module_name))
 
-    def imported_entities_from_module(self, module_name) -> list[str]:
+    def imported_entities_from_module(self, module_name) -> set[str]:
         return self.__entities.get(module_name)
 
     def set_fan_in(self, fan_in: int) -> None:
         self.__fan_in = fan_in
 
-    def set_external_used_entities(self, external_used_entities: list[str]) -> None:
+    def set_external_used_entities(self, external_used_entities: set[str]) -> None:
         self.__external_used_entities = external_used_entities
+
+    @property
+    def external_used_entities(self) -> set[str]:
+        return self.__external_used_entities
 
     @classmethod
     def from_dict(cls, data: dict, service_path: str) -> Component:
@@ -72,7 +75,6 @@ class Component:
 
     @cached_property
     def instability(self) -> float:
-        logger.info(f"INNNNNNNN {self.name} {self.__fan_out} {self.__fan_in}")
         try:
             return self.__fan_out / (self.__fan_in + self.__fan_out)
         except ZeroDivisionError:
@@ -102,7 +104,6 @@ class Component:
             f"I = {self.instability} \\n"
             f"A = {self.abstractness} \\n"
             f"++++++++ \\n"
-            f"External used entities: {len(self.__external_used_entities)} \\n"
-            f"Imported entities: {len(self.__imported_entities)} pieces\\n"
+            f"External used entities: {self.__external_used_entities} \\n"
             f"Imported entities: {self.__imported_entities} \\n"
         )

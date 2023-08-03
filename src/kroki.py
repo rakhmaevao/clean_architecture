@@ -11,6 +11,7 @@ def _encode_code(code: str) -> str:
 
 
 def draw_plantuml(code: str):
+    logger.info(f"Drawing {code}")
     response = requests.get(f"https://kroki.io/plantuml/svg/{_encode_code(code)}")
     if response.status_code != 200:
         raise RuntimeError(f"Request GET failed {response.content}")

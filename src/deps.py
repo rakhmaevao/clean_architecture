@@ -27,7 +27,6 @@ def read_used_libraries(srv_path: str) -> list[str]:
         poetry_lock = tomli.load(f)["package"]
     pkgs = [pkg["name"].replace("-", "_") for pkg in poetry_lock]
     libs = pkgs + list(sys.stdlib_module_names)
-    logger.info(f"Libs: {libs}")
     return libs
 
 

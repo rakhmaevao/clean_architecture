@@ -6,7 +6,7 @@ from .deps import get_deps
 
 class MicroService:
     def __init__(self, path: str) -> None:
-        self.__components = {
+        self.__components: dict[CompName, Component] = {
             k: Component.from_dict(v, path) for k, v in get_deps(path).items()
         }
         for comp in self.__components.values():
@@ -14,23 +14,22 @@ class MicroService:
             comp.set_external_used_entities(self.__compute_external_used_entities(comp))
 
     def __compute_fan_in(self, component: Component) -> int:
-        logger.info(f"CoM {component.name} {component.imported_by}")
         fan_in = 0
         for dependent_component_name in component.imported_by:
             fan_in += self.components[
                 dependent_component_name
             ].num_imported_entities_from_module(component.name)
-        logger.info(f"fan_in {fan_in}")
         return fan_in
 
-    def __compute_external_used_entities(self, component: Component) -> int:
-        logger.info(f"CoM {component.name} {component.imported_by}")
-        external_used_entities = []
+    def __compute_external_used_entities(self, component: Component) -> set[str]:
+        external_used_entities = set()
         for dependent_component_name in component.imported_by:
-            external_used_entities += self.components[
+            external_used_entities |= self.components[
                 dependent_component_name
             ].imported_entities_from_module(component.name)
-        logger.info(f"external_used_entities {external_used_entities}")
+        logger.info(
+            f"External_used_entities for {component.name} {external_used_entities}"
+        )
         return external_used_entities
 
     @property
