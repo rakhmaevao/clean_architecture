@@ -18,5 +18,5 @@ class PythonModule:
 
 @dataclass
 class Component:
-    modules: set[PythonModule]
+    modules: dict[ModuleName, PythonModule]
     path: str
