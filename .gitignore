@@ -6,3 +6,6 @@ __pycache__
 *.html
 *.js
 /.idea
+/Dash_files
+/assets
+/.pytest_cache
