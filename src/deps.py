@@ -21,17 +21,3 @@ def get_deps(srv_path: str) -> dict:
     return json.loads(result.stdout)
 
 
-@lru_cache
-def read_used_libraries(srv_path: str) -> list[str]:
-    with open(f"{srv_path}/poetry.lock", "rb") as f:
-        poetry_lock = tomli.load(f)["package"]
-    pkgs = [pkg["name"].replace("-", "_") for pkg in poetry_lock]
-    libs = pkgs + list(sys.stdlib_module_names)
-    return libs
-
-
-def is_lib(module_name, srv_path) -> bool:
-    libs = read_used_libraries(srv_path)
-    if module_name.split(".")[0] in libs:
-        return True
-    return False
