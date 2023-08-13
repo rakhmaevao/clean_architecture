@@ -1,9 +1,9 @@
 import pytest
 from src.application.project_reader import (
-    _read_all_py_modules,
+    _raw_read_all_py_modules,
     _get_python_files,
     _generate_module_name,
-    read_project,
+    _read_all_py_modules,
 )
 from src.application.component import PythonModule
 from pathlib import Path, PosixPath
@@ -30,7 +30,7 @@ def test_module_name_generation(path, root_path, m_name):
 
 
 def test_simple_read():
-    assert _read_all_py_modules(Path("tests/mock_component")) == {
+    assert _raw_read_all_py_modules(Path("tests/mock_component")) == {
         "main": PythonModule(
             name="main",
             path=PosixPath("tests/mock_component/main.py"),
@@ -99,7 +99,7 @@ def test_get_all_python_files():
 
 
 def test_read_project():
-    assert read_project(Path("tests/mock_component")) == {
+    assert _read_all_py_modules(Path("tests/mock_component")) == {
         "main": PythonModule(
             name="main",
             path=PosixPath("tests/mock_component/main.py"),

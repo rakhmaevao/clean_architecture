@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 from typing import TypeAlias
 from dataclasses import asdict
 
@@ -22,4 +23,4 @@ class PythonModule:
 @dataclass
 class Component:
     modules: dict[ModuleName, PythonModule]
-    path: str
+    path: Path

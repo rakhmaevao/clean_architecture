@@ -33,7 +33,7 @@ def _get_python_files(root_path: Path) -> list[Path]:
     return [path for path in root_path.rglob("*.py")]
 
 
-def _read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
+def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     ex_libs = _read_used_libraries(root_path)
     all_modules = {}
     for path in _get_python_files(root_path):
@@ -42,12 +42,19 @@ def _read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     return all_modules
 
 
-def read_project(root_path: Path) -> list[PythonModule]:
-    raw_py_modules = _read_all_py_modules(root_path)
+def _read_all_py_modules(root_path: Path) -> list[PythonModule]:
+    raw_py_modules = _raw_read_all_py_modules(root_path)
     for py_module in raw_py_modules.values():
         for i_m_name, i_entities in py_module.imported_entities.items():
             raw_py_modules[i_m_name].exported_entities |= i_entities
     return raw_py_modules
+
+
+def read_component(root_path: Path) -> Component:
+    return Component(
+        modules=_read_all_py_modules(root_path),
+        path=root_path,
+    )
 
 
 @lru_cache
