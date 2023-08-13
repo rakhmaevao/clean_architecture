@@ -1,7 +1,6 @@
 from loguru import logger
 from .component import Component, PythonModule
 from .imports import get_imported_entities
-from loguru import logger
 import tomli
 from functools import lru_cache
 import sys
