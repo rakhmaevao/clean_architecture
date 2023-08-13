@@ -1,4 +1,4 @@
-from src.kroki import draw_plantuml
+from src.infra.kroki import draw_plantuml
 
 
 def test_draw_plantuml():

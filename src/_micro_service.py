@@ -1,6 +1,6 @@
 from loguru import logger
 import pandas as pd
-from .component import Component, CompName
+from ._component import Component, CompName
 from .deps import get_deps
 
 

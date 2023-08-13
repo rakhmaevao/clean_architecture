@@ -3,7 +3,7 @@ from src.application.project_reader import (
     _raw_read_all_py_modules,
     _get_python_files,
     _generate_module_name,
-    _read_all_py_modules,
+    _read_py_modules,
 )
 from src.application.component import PythonModule
 from pathlib import Path, PosixPath
@@ -99,7 +99,7 @@ def test_get_all_python_files():
 
 
 def test_read_project():
-    assert _read_all_py_modules(Path("tests/mock_component")) == {
+    assert _read_py_modules(Path("tests/mock_component")) == {
         "main": PythonModule(
             name="main",
             path=PosixPath("tests/mock_component/main.py"),

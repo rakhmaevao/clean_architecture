@@ -1,6 +1,6 @@
-from src.kroki import draw_plantuml, save_svg
-from src.plantuml_coder import to_plantuml
-from src.micro_service import MicroService
+from src.infra.kroki import draw_plantuml, save_svg
+from src._plantuml_coder import to_plantuml
+from src._micro_service import MicroService
 import plotly.express as px
 from dash import Dash, html, dcc
 

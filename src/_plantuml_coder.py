@@ -1,4 +1,4 @@
-from src.component import CompName, Component
+from src._component import CompName, Component
 
 
 def to_plantuml(components: dict[CompName, Component]) -> str:

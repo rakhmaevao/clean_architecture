@@ -21,6 +21,6 @@ class PythonModule:
 
 
 @dataclass
-class Component:
+class PythonProject:
     modules: dict[ModuleName, PythonModule]
     path: Path

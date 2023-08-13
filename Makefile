@@ -1,5 +1,5 @@
 pytest:
-	poetry run pytest -vv -s --disable-warnings tests/test_application
+	poetry run pytest -vv -s --disable-warnings tests
 
 format:
 	poetry run black .

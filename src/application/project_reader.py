@@ -1,5 +1,5 @@
 from loguru import logger
-from .component import Component, PythonModule, ModuleName
+from .component import PythonProject, PythonModule, ModuleName
 from .imports import get_imported_entities
 import tomli
 from functools import lru_cache
@@ -42,7 +42,7 @@ def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     return all_modules
 
 
-def _read_all_py_modules(root_path: Path) -> list[PythonModule]:
+def _read_py_modules(root_path: Path) -> list[PythonModule]:
     raw_py_modules = _raw_read_all_py_modules(root_path)
     for py_module in raw_py_modules.values():
         for i_m_name, i_entities in py_module.imported_entities.items():
@@ -50,9 +50,9 @@ def _read_all_py_modules(root_path: Path) -> list[PythonModule]:
     return raw_py_modules
 
 
-def read_component(root_path: Path) -> Component:
-    return Component(
-        modules=_read_all_py_modules(root_path),
+def read_project(root_path: Path) -> PythonProject:
+    return PythonProject(
+        modules=_read_py_modules(root_path),
         path=root_path,
     )
 
