@@ -61,7 +61,7 @@ def test_simple_read():
         PythonModule(
             name="src.application.parser",
             path=PosixPath("tests/mock_component/src/application/parser.py"),
-            imported_entities={"message": {"Message"}},
+            imported_entities={"src.application.message": {"Message"}},
             exported_entities=set(),
         ),
         PythonModule(

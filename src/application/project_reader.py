@@ -15,9 +15,10 @@ def _generate_module_name(path: Path, root_path: Path) -> str:
 
 
 def _read_module(path: Path, root_path: Path, ex_libs: set[str]) -> PythonModule:
-    imported_entities = get_imported_entities(path)
+    name = _generate_module_name(path, root_path)
+    imported_entities = get_imported_entities(name, path)
     return PythonModule(
-        name=_generate_module_name(path, root_path),
+        name=name,
         path=path,
         imported_entities={
             module_name: set(imported_entities.get(module_name))

@@ -1,5 +1,5 @@
 pytest:
-	poetry run pytest -vv -s --disable-warnings tests/test_application/test_project_reader.py 
+	poetry run pytest -vv -s --disable-warnings tests/test_application
 
 format:
 	poetry run black .

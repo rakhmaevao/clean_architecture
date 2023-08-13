@@ -1,4 +1,6 @@
+from pathlib import Path
 from typing import NamedTuple
+from loguru import logger
 from pyparsing import Word, alphas, nums
 import ast
 
@@ -46,14 +48,26 @@ class _ImportInstruction(NamedTuple):
         return self.module
 
 
-def get_imported_entities(path: str) -> ImportedEntitiesStorage:
+def _generate_module_name(ast_m_name: str, level: int, root_model_name: str):
+    if level == 0:
+        return ast_m_name
+    return ".".join(root_model_name.split(".")[:-level]) + "." + ast_m_name
+
+
+def get_imported_entities(m_name: str, path: str) -> ImportedEntitiesStorage:
     imported_entities = ImportedEntitiesStorage()
     imported_modules = []
     with open(path, "r") as f:
         ast_code = ast.parse(f.read())
     for node in ast.walk(ast_code):
         if isinstance(node, ast.ImportFrom):
-            [imported_entities.add(node.module, name.name) for name in node.names]
+            [
+                imported_entities.add(
+                    _generate_module_name(node.module, node.level, m_name),
+                    name.name,
+                )
+                for name in node.names
+            ]
         if isinstance(node, ast.Import):
             for module in node.names:
                 imported_modules.append(_ImportInstruction(module.name, module.asname))
