@@ -19,5 +19,3 @@ def get_deps(srv_path: str) -> dict:
         raise RuntimeError(f"Pydeps failed {result.stderr}")
 
     return json.loads(result.stdout)
-
-

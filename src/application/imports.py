@@ -30,7 +30,7 @@ class ImportedEntitiesStorage:
 
     def get_modules(self) -> list[str]:
         return list(self.__storage.keys())
-    
+
     def to_dict(self) -> dict[str, set[str]]:
         return self.__storage
 
