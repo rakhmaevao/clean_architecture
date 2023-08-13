@@ -33,7 +33,7 @@ def _get_python_files(root_path: Path) -> list[Path]:
     return [path for path in root_path.rglob("*.py")]
 
 
-def read_project(root_path: Path) -> Component:
+def _read_all_py_modules(root_path: Path) -> list[PythonModule]:
     ex_libs = _read_used_libraries(root_path)
     return [
         _read_module(path, root_path, ex_libs) for path in _get_python_files(root_path)
