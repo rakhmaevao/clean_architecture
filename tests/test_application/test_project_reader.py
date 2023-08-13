@@ -29,14 +29,14 @@ def test_module_name_generation(path, root_path, m_name):
 
 
 def test_simple_read():
-    assert _read_all_py_modules(Path("tests/mock_component")) == [
-        PythonModule(
+    assert _read_all_py_modules(Path("tests/mock_component")) == {
+        "main": PythonModule(
             name="main",
             path=PosixPath("tests/mock_component/main.py"),
             imported_entities={"src.app": {"Application"}, "src.config": {"Config"}},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.app": PythonModule(
             name="src.app",
             path=PosixPath("tests/mock_component/src/app.py"),
             imported_entities={
@@ -45,43 +45,43 @@ def test_simple_read():
             },
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.config": PythonModule(
             name="src.config",
             path=PosixPath("tests/mock_component/src/config.py"),
             imported_entities={},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src": PythonModule(
             name="src",
             path=PosixPath("tests/mock_component/src/__init__.py"),
             imported_entities={},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.application.parser": PythonModule(
             name="src.application.parser",
             path=PosixPath("tests/mock_component/src/application/parser.py"),
             imported_entities={"src.application.message": {"Message"}},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.application.message": PythonModule(
             name="src.application.message",
             path=PosixPath("tests/mock_component/src/application/message.py"),
             imported_entities={},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.application": PythonModule(
             name="src.application",
             path=PosixPath("tests/mock_component/src/application/__init__.py"),
             imported_entities={},
             exported_entities=set(),
         ),
-        PythonModule(
+        "src.presentation.api": PythonModule(
             name="src.presentation.api",
             path=PosixPath("tests/mock_component/src/presentation/api.py"),
             imported_entities={"src.application.parser": {"parse_message"}},
             exported_entities=set(),
         ),
-    ]
+    }
 
 
 def test_get_all_python_files():
