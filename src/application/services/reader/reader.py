@@ -1,5 +1,5 @@
 from loguru import logger
-from ...project import PythonProject, PythonModule, ModuleName
+from src.application.project import PythonProject, PythonModule, ModuleName
 from .imports import get_imported_entities
 import tomli
 from functools import lru_cache
