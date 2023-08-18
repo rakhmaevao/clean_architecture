@@ -18,7 +18,7 @@ class PythonModule:
 
     def to_dict(self):
         return asdict(self)
-    
+
     @property
     def instability(self):
         pass
