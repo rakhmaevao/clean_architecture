@@ -1,11 +1,10 @@
 from __future__ import annotations
+from functools import cached_property
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TypeAlias
 from dataclasses import asdict
-
-from loguru import logger
 
 ModuleName: TypeAlias = str
 EntityName: TypeAlias = str
@@ -32,7 +31,7 @@ class PythonModule:
         except ZeroDivisionError:
             return 0.0
 
-    @property
+    @cached_property
     def abstractness(self):
         num_classes = self._num_occurrences(self.path, "class", ["    class Config:"])
         num_abs_classes = self._num_occurrences(self.path, "ABC") - 1
@@ -42,6 +41,10 @@ class PythonModule:
             return num_abs_classes / num_classes
         except ZeroDivisionError:
             return 0.0
+
+    @property
+    def distance(self) -> float:
+        return abs(self.instability + self.abstractness - 1)
 
     @staticmethod
     def _num_occurrences(path: str, string: str, exclude: list[str] = []) -> int:

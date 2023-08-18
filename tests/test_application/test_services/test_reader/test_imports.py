@@ -1,6 +1,5 @@
 from src.application.services.reader.imports import _generate_module_name
 import pytest
-from pathlib import Path
 
 
 @pytest.mark.parametrize(

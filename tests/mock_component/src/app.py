@@ -14,8 +14,7 @@ class Application:
     def from_config(cls, config: Config) -> "Application":
         app = FastAPI()
         app.include_router(router)
-        application = Application(config=config, app=app)
-        return application
+        return Application(config=config, app=app)
 
     async def start(self) -> None:
         logger.info("HTTP server is starting")

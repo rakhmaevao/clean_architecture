@@ -1,6 +1,4 @@
-from pathlib import Path
 from typing import NamedTuple
-from loguru import logger
 from pyparsing import Word, alphas, nums
 import ast
 
@@ -18,7 +16,7 @@ def _parse_use_from_dot(string: str, module_prefix: str) -> set[str]:
 
 class ImportedEntitiesStorage:
     def __init__(self) -> None:
-        self.__storage = dict()
+        self.__storage = {}
 
     def add(self, module: str, entity: str) -> None:
         if module not in self.__storage:

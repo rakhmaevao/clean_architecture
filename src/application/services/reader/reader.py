@@ -1,4 +1,3 @@
-from loguru import logger
 from src.application.project import PythonProject, PythonModule, ModuleName
 from .imports import get_imported_entities
 import tomli
@@ -72,5 +71,4 @@ def _read_used_libraries(srv_path: Path) -> set[str]:
     with open(srv_path / "poetry.lock", "rb") as f:
         poetry_lock = tomli.load(f)["package"]
     pkgs = {pkg["name"].replace("-", "_") for pkg in poetry_lock}
-    libs = pkgs | sys.stdlib_module_names
-    return libs
+    return pkgs | sys.stdlib_module_names
