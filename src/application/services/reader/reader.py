@@ -47,6 +47,16 @@ def _read_py_modules(root_path: Path) -> list[PythonModule]:
     for py_module in raw_py_modules.values():
         for i_m_name, i_entities in py_module.imported_entities.items():
             raw_py_modules[i_m_name].exported_entities |= i_entities
+    
+    blank_modules = set()
+    for py_module in raw_py_modules.values():
+        if (
+            len(py_module.exported_entities) == 0
+            and len(py_module.imported_entities) == 0
+        ):
+            blank_modules.add(py_module.name)
+
+    [raw_py_modules.pop(b_m) for b_m in blank_modules]
     return raw_py_modules
 
 
