@@ -1,11 +1,11 @@
 import pytest
-from src.application.project_reader import (
+from src.application.services.reader.reader import (
     _raw_read_all_py_modules,
     _get_python_files,
     _generate_module_name,
     _read_py_modules,
 )
-from src.application.component import PythonModule
+from src.application.project import PythonModule
 from pathlib import Path, PosixPath
 
 

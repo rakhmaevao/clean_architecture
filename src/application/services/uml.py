@@ -1,4 +1,4 @@
-from .component import PythonProject
+from ..project import PythonProject
 from src.infra import kroki
 
 class UmlDrawer:

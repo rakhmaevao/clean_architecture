@@ -1,4 +1,4 @@
-from src.application.imports import _generate_module_name
+from src.application.services.reader.imports import _generate_module_name
 import pytest
 from pathlib import Path
 
