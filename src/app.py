@@ -1,4 +1,4 @@
-from src.infra.kroki import draw_plantuml, save_svg
+from src.infra.kroki import _draw_plantuml, to_svg
 from src._plantuml_coder import to_plantuml
 from src._micro_service import MicroService
 import plotly.express as px
@@ -9,8 +9,8 @@ class Application:
     def __init__(self, micro_service_path: str) -> None:
         micro_service = MicroService(micro_service_path)
 
-        svg = draw_plantuml(to_plantuml(micro_service.components))
-        save_svg(file_path="assets/components_diagrams.svg", svg=svg)
+        svg = _draw_plantuml(to_plantuml(micro_service.components))
+        to_svg(file_path="assets/components_diagrams.svg", svg=svg)
 
         df = micro_service.get_i_a_statistics()
         print(df)

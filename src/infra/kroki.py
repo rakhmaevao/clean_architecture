@@ -10,7 +10,7 @@ def _encode_code(code: str) -> str:
     )
 
 
-def draw_plantuml(code: str):
+def _draw_plantuml(code: str) -> bytes:
     logger.info(f"Drawing {code}")
     response = requests.get(f"https://kroki.io/plantuml/svg/{_encode_code(code)}")
     if response.status_code != 200:
@@ -18,6 +18,7 @@ def draw_plantuml(code: str):
     return response.content
 
 
-def save_svg(file_path: str, svg: bytes):
+def to_svg(code: str, file_path: str):
+    svg = _draw_plantuml(code)
     with open(file_path, "wb") as f:
         f.write(svg)
