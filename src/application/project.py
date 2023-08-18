@@ -18,6 +18,14 @@ class PythonModule:
 
     def to_dict(self):
         return asdict(self)
+    
+    @property
+    def instability(self):
+        pass
+
+    @property
+    def abstractness(self):
+        pass
 
 
 @dataclass
