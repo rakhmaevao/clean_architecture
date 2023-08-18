@@ -21,7 +21,14 @@ class PythonModule:
 
     @property
     def instability(self):
-        pass
+        fan_out = len(self.exported_entities)
+        fan_in = sum(
+            [len(self.imported_entities.get(m)) for m in self.imported_entities]
+        )
+        try:
+            return fan_out / (fan_in + fan_out)
+        except ZeroDivisionError:
+            return 0.0
 
     @property
     def abstractness(self):
