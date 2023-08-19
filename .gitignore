@@ -10,3 +10,4 @@ __pycache__
 /assets
 /.pytest_cache
 .venv
+.mypy_cache
