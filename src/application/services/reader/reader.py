@@ -1,3 +1,4 @@
+from loguru import logger
 from src.application.project import PythonProject, PythonModule, ModuleName
 from .imports import get_imported_entities
 import tomli
@@ -29,7 +30,9 @@ def _read_module(path: Path, root_path: Path, ex_libs: set[str]) -> PythonModule
 
 
 def _get_python_files(root_path: Path) -> list[Path]:
-    return [path for path in root_path.rglob("*.py")]
+    return [path for path in (root_path / "src").rglob("*.py")] + [
+        root_path / "main.py"
+    ]
 
 
 def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:

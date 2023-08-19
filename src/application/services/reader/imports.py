@@ -1,5 +1,7 @@
 from typing import NamedTuple
+from loguru import logger
 from pyparsing import Word, alphas, nums
+from pyparsing.exceptions import ParseException
 import ast
 
 entity_name = Word(alphas + "_" + nums)
@@ -10,7 +12,10 @@ def _parse_use_from_dot(string: str, module_prefix: str) -> set[str]:
     entities = set()
     if len(sub_strings) != 1:
         for s in sub_strings[1:]:
-            entities.add(entity_name.parse_string(s).as_list()[0])
+            try:
+                entities.add(entity_name.parse_string(s).as_list()[0])
+            except ParseException:
+                pass
     return entities
 
 
@@ -54,11 +59,13 @@ def _generate_module_name(ast_m_name: str, level: int, root_model_name: str):
 
 def get_imported_entities(m_name: str, path: str) -> ImportedEntitiesStorage:
     imported_entities = ImportedEntitiesStorage()
-    imported_modules = []
+    imported_modules: list[_ImportInstruction] = []
     with open(path, "r") as f:
         ast_code = ast.parse(f.read())
     for node in ast.walk(ast_code):
         if isinstance(node, ast.ImportFrom):
+            if node.module is None:
+                continue
             [
                 imported_entities.add(
                     _generate_module_name(node.module, node.level, m_name),

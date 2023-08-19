@@ -9,3 +9,4 @@ __pycache__
 /Dash_files
 /assets
 /.pytest_cache
+.venv
