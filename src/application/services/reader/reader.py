@@ -48,7 +48,10 @@ def _read_py_modules(root_path: Path) -> list[PythonModule]:
     raw_py_modules = _raw_read_all_py_modules(root_path)
     for py_module in raw_py_modules.values():
         for i_m_name, i_entities in py_module.imported_entities.items():
-            raw_py_modules[i_m_name].exported_entities |= i_entities
+            try:
+                raw_py_modules[i_m_name].exported_entities |= i_entities
+            except KeyError:
+                pass
 
     blank_modules = set()
     for py_module in raw_py_modules.values():

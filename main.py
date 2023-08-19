@@ -1,23 +1,22 @@
-# from src.app import Application
-
-# if __name__ == "__main__":
-#     app = Application(micro_service_path="/home/rahmaevao/Projects/konoha/blocks")
-#     app.run()
-
-
 from pathlib import Path
 from src.application.services.metrics import compute_short_metrics
 from src.application.services.reader.reader import read_project
-
+from src.application.services.uml import UmlDrawer
 
 projects = {
-    # "blocks": Path("/home/rahmaevao/Projects/konoha/blocks"),
-    # "administrator": Path("/home/rahmaevao/Projects/konoha/administrator"),
-    # "filesystem": Path("/home/rahmaevao/Projects/konoha/filesystem"),
+    "blocks": Path("/home/rahmaevao/Projects/konoha/blocks"),
+    "administrator": Path("/home/rahmaevao/Projects/konoha/administrator"),
+    "filesystem": Path("/home/rahmaevao/Projects/konoha/filesystem"),
     "this": Path("/home/rahmaevao/Projects/clean_architecture"),
 }
 
 
-for project, path in projects.items():
-    metrics = compute_short_metrics(read_project(path))
-    print(f"{project}: {metrics}")
+for project_name, path in projects.items():
+    project = read_project(path)
+    metrics = compute_short_metrics(project)
+    print(f"{project_name}: {metrics}")
+    uml_drawer = UmlDrawer()
+    uml_drawer.draw(
+        project,
+        f"{project_name}.svg",
+    )
