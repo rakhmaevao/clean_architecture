@@ -6,8 +6,9 @@ from src.application.services.uml import UmlDrawer
 projects = {
     # "blocks": Path("/home/rahmaevao/Projects/konoha/blocks"),
     # "administrator": Path("/home/rahmaevao/Projects/konoha/administrator"),
-    "filesystem": Path("/home/rahmaevao/Projects/konoha/filesystem"),
+    # "filesystem": Path("/home/rahmaevao/Projects/konoha/filesystem"),
     # "this": Path("/home/rahmaevao/Projects/clean_architecture"),
+    "tests": Path("/home/rahmaevao/Projects/clean_architecture/tests/mock_component"),
 }
 
 
