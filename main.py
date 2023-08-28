@@ -4,10 +4,10 @@ from src.application.services.reader.reader import read_project
 from src.application.services.uml import UmlDrawer
 
 projects = {
-    "blocks": Path("/home/rahmaevao/Projects/konoha/blocks"),
-    "administrator": Path("/home/rahmaevao/Projects/konoha/administrator"),
+    # "blocks": Path("/home/rahmaevao/Projects/konoha/blocks"),
+    # "administrator": Path("/home/rahmaevao/Projects/konoha/administrator"),
     "filesystem": Path("/home/rahmaevao/Projects/konoha/filesystem"),
-    "this": Path("/home/rahmaevao/Projects/clean_architecture"),
+    # "this": Path("/home/rahmaevao/Projects/clean_architecture"),
 }
 
 

@@ -37,6 +37,7 @@ def _get_python_files(root_path: Path) -> list[Path]:
 
 def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     ex_libs = _read_used_libraries(root_path)
+    ex_libs |= _read_ignore_imports(root_path)
     all_modules = {}
     for path in _get_python_files(root_path):
         module = _read_module(path, root_path, ex_libs)
@@ -78,3 +79,13 @@ def _read_used_libraries(srv_path: Path) -> set[str]:
         poetry_lock = tomli.load(f)["package"]
     pkgs = {pkg["name"].replace("-", "_") for pkg in poetry_lock}
     return pkgs | sys.stdlib_module_names
+
+
+def _read_ignore_imports(srv_path: Path) -> set[str]:
+    with open(srv_path / "pyproject.toml", "rb") as f:
+        pyproject = tomli.load(f)
+    return set(
+        pyproject.get("tool")
+        .get("clean_architecture", {})
+        .get("ignore_import_names", [])
+    )
