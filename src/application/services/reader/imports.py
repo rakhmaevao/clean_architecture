@@ -15,6 +15,7 @@ def _parse_use_from_dot(string: str, module_prefix: str) -> set[str]:
             try:
                 entities.add(entity_name.parse_string(s).as_list()[0])
             except ParseException:
+                logger.warning(f"Failed to parse {s}")
                 pass
     return entities
 

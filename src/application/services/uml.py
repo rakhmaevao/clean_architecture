@@ -22,10 +22,10 @@ class UmlDrawer:
     def _module_repr(self, module: PythonModule) -> str:
         return (
             f"{module.name} \\n"
-            # f"Path: {module.path} \\n"
-            # f"I = {module.instability} \\n"
-            # f"A = {module.abstractness} \\n"
-            # f"++++++++ \\n"
-            # f"External used entities: {module.exported_entities} \\n"
-            # f"Imported entities: {module.imported_entities} \\n"
+            f"Path: {module.path} \\n"
+            f"I = {module.instability} \\n"
+            f"A = {module.abstractness} \\n"
+            f"++++++++ \\n"
+            f"External used entities: {module.exported_entities} \\n"
+            f"Imported entities: {module.imported_entities} \\n"
         )

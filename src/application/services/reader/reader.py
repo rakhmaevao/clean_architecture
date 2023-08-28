@@ -29,10 +29,10 @@ def _read_module(path: Path, root_path: Path, ex_libs: set[str]) -> PythonModule
     )
 
 
-def _get_python_files(root_path: Path) -> list[Path]:
-    return [path for path in (root_path / "src").rglob("*.py")] + [
+def _get_python_files(root_path: Path) -> set[Path]:
+    return {path for path in (root_path / "src").rglob("*.py")} | {
         root_path / "main.py"
-    ]
+    }
 
 
 def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
@@ -52,6 +52,7 @@ def _read_py_modules(root_path: Path) -> list[PythonModule]:
             try:
                 raw_py_modules[i_m_name].exported_entities |= i_entities
             except KeyError:
+                logger.warning(f"Module {i_m_name} not found")
                 pass
 
     blank_modules = set()

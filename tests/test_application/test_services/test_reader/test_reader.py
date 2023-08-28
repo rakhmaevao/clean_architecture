@@ -87,7 +87,7 @@ def test_simple_read():
 
 
 def test_get_all_python_files():
-    assert _get_python_files(Path("tests/mock_component")) == [
+    assert _get_python_files(Path("tests/mock_component")) == {
         PosixPath("tests/mock_component/main.py"),
         PosixPath("tests/mock_component/src/app.py"),
         PosixPath("tests/mock_component/src/config.py"),
@@ -96,7 +96,7 @@ def test_get_all_python_files():
         PosixPath("tests/mock_component/src/application/message.py"),
         PosixPath("tests/mock_component/src/application/__init__.py"),
         PosixPath("tests/mock_component/src/presentation/api.py"),
-    ]
+    }
 
 
 def test_read_project():
