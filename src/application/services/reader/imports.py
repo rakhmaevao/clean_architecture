@@ -60,7 +60,7 @@ def _generate_module_name(ast_m_name: str, level: int, root_model_name: str):
 
 def get_imported_entities(m_name: str, path: str) -> ImportedEntitiesStorage:
     imported_entities = ImportedEntitiesStorage()
-    imported_modules: list[_ImportInstruction] = []
+    imported_names: list[_ImportInstruction] = []
     with open(path, "r") as f:
         ast_code = ast.parse(f.read())
     for node in ast.walk(ast_code):
@@ -76,11 +76,11 @@ def get_imported_entities(m_name: str, path: str) -> ImportedEntitiesStorage:
             ]
         if isinstance(node, ast.Import):
             for module in node.names:
-                imported_modules.append(_ImportInstruction(module.name, module.asname))
+                imported_names.append(_ImportInstruction(module.name, module.asname))
 
     with open(path, "r") as f:
         for line in f:
-            for module in imported_modules:
+            for module in imported_names:
                 entities = _parse_use_from_dot(line, module.prefix)
                 if entities:
                     [imported_entities.add(module.module, e) for e in entities]
