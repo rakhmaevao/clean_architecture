@@ -41,6 +41,7 @@ def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
                             )
                         else:
                             classes[name].using_modules_paths.add(module_path)
+                sys.path.remove(root)
                 del sys.modules[module_name]
     return [c for c in classes.values()]
 
