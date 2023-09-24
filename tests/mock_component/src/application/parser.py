@@ -1,4 +1,4 @@
-from .message import Message
+from src.application.message import Message
 from src.application import models
 
 def parse_message(raw_str: str) -> Message:
