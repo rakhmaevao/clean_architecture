@@ -23,7 +23,6 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
     classes: dict[ClassName, ClassSearchingResult] = dict()
     modules = {}
 
-    # Проходим по всем файлам в проекте с расширением .py
     for root, _, files in os.walk(project_path):
         for file in files:
             if file.endswith(".py"):
@@ -31,19 +30,17 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
                 module_name = os.path.splitext(file)[0]
                 module_path = os.path.join(root, file)
                 modules[module_name] = module_path
-
-                # Импортируем модуль для анализа его содержимого
                 module = __import__(module_name)
 
                 # Ищем классы в модуле
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj):
-                        logger.info(f"{name=}")
+                        logger.info(f"Class {name} in {module_path}")
                         if name not in classes:
                             classes[name] = ClassSearchingResult(
                                 class_name=name,
                                 source_module_path=inspect.getfile(obj),
-                                using_modules_paths=set(),
+                                using_modules_paths=set([module_path]),
                             )
                         else:
                             classes[name].using_modules_paths.add(module_path)
