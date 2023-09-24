@@ -19,9 +19,8 @@ class ClassSearchingResult:
     using_modules_paths: set[str]
 
 
-def get_all_classes(project_path: Path) -> ClassSearchingResult:
+def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
     classes: dict[ClassName, ClassSearchingResult] = dict()
-    modules = {}
 
     for root, _, files in os.walk(project_path):
         for file in files:
@@ -29,7 +28,6 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
                 sys.path.append(root)
                 module_name = os.path.splitext(file)[0]
                 module_path = os.path.join(root, file)
-                modules[module_name] = module_path
                 module = __import__(module_name)
 
                 # Ищем классы в модуле
@@ -43,6 +41,7 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
                             )
                         else:
                             classes[name].using_modules_paths.add(module_path)
+                del sys.modules[module_name]
     return [c for c in classes.values()]
 
 

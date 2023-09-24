@@ -1,10 +1,10 @@
 from loguru import logger
 from src.application.project import PythonProject, PythonModule, ModuleName
-from .imports import get_imported_entities
 import tomli
 from functools import lru_cache
 import sys
 from pathlib import Path
+from src.application.services.reader.inspector import get_all_classes
 
 
 def _generate_module_name(path: Path, root_path: Path) -> str:
@@ -12,21 +12,6 @@ def _generate_module_name(path: Path, root_path: Path) -> str:
     if m_name.split(".")[-1] == "__init__":
         m_name = ".".join(m_name.split(".")[:-1])
     return m_name
-
-
-def _read_module(path: Path, root_path: Path, ex_libs: set[str]) -> PythonModule:
-    name = _generate_module_name(path, root_path)
-    imported_entities = get_imported_entities(name, path)
-    return PythonModule(
-        name=name,
-        path=path,
-        imported_entities={
-            module_name: set(imported_entities.get(module_name))
-            for module_name in imported_entities.get_modules()
-            if module_name.split(".")[0] not in ex_libs
-        },
-        exported_entities=set(),
-    )
 
 
 def _get_python_files(root_path: Path) -> set[Path]:
@@ -39,9 +24,36 @@ def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     ex_libs = _read_used_libraries(root_path)
     ex_libs |= _read_ignore_imports(root_path)
     all_modules = {}
+    all_classes = get_all_classes(root_path)
     for path in _get_python_files(root_path):
-        module = _read_module(path, root_path, ex_libs)
-        all_modules[module.name] = module
+        for using_class in all_classes:
+            src_class_module_name = _generate_module_name(
+                using_class.source_module_path, root_path
+            )
+            for using_module_path in using_class.using_modules_paths:
+                if using_module_path == path:
+                    module_name = _generate_module_name(path, root_path)
+                    if module_name not in all_modules:
+                        all_modules[module_name] = PythonModule(
+                            name=module_name,
+                            path=path,
+                            imported_entities={
+                                src_class_module_name: set([using_class.class_name])
+                            },
+                            exported_entities=set(),
+                        )
+                    else:
+                        if (
+                            src_class_module_name
+                            in all_modules[module_name].imported_entities
+                        ):
+                            all_modules[module_name].imported_entities[
+                                src_class_module_name
+                            ].add(using_class.class_name)
+                        else:
+                            all_modules[module_name].imported_entities[
+                                src_class_module_name
+                            ] = set([using_class.class_name])
     return all_modules
 
 
@@ -90,3 +102,8 @@ def _read_ignore_imports(srv_path: Path) -> set[str]:
         .get("clean_architecture", {})
         .get("ignore_import_names", [])
     )
+
+if __name__ == "__main__":
+    # Пример использования скрипта
+    project_path = "/home/rahmaevao/Projects/clean_architecture/tests/mock_component"
+    result = read_project(project_path)
