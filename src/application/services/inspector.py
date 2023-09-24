@@ -36,18 +36,21 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
                 # Ищем классы в модуле
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj):
-                        if name not in classes:
-                            classes[name] = ClassSearchingResult(
-                                class_name=name,
-                                source_module_path=inspect.getfile(obj),
-                                using_modules_paths=set(),
-                            )
-                        else:
-                            logger.warning(F"FFFF")
+                        logger.info(f"{obj=}")
+                        # logger.info(f"{name=}")
+                        # if name not in classes:
+                        #     classes[name] = ClassSearchingResult(
+                        #         class_name=name,
+                        #         source_module_path=inspect.getfile(obj),
+                        #         using_modules_paths=set(),
+                        #     )
+                        # else:
+                        #     logger.warning(F"FFFF")
     return classes
 
 if __name__ == "__main__":
     # Пример использования скрипта
     project_path = "/home/rahmaevao/Projects/clean_architecture/tests/mock_component"
     result = get_all_classes(project_path)
-    print(f"{result=}")
+    # for ss in result.values():
+    #     print(f"{ss=}")
