@@ -11,11 +11,13 @@ ClassName: TypeAlias = str
 SrcM: TypeAlias = str
 UsingM: TypeAlias = str
 
+
 @dataclass
 class ClassSearchingResult:
     class_name: str
     source_module_path: str
     using_modules_paths: set[str]
+
 
 def get_all_classes(project_path: Path) -> ClassSearchingResult:
     classes: dict[ClassName, ClassSearchingResult] = dict()
@@ -46,6 +48,7 @@ def get_all_classes(project_path: Path) -> ClassSearchingResult:
                         else:
                             classes[name].using_modules_paths.add(module_path)
     return classes
+
 
 if __name__ == "__main__":
     # Пример использования скрипта
