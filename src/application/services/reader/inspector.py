@@ -38,12 +38,8 @@ def get_all_classes(
                 sys.path.append(root)
                 module_name = os.path.splitext(file)[0]
                 module_path = os.path.join(root, file)
-
-                logger.info(f"FFFFFF{module_path} {sys.path} {sys.modules}")
-                print(sys.path)
                 module = importlib.import_module(module_name)
                 other_prj_modules.add(module_name)
-                # module = __import__(module_name)
 
                 # Ищем классы в модуле
                 for name, obj in inspect.getmembers(module):
@@ -60,20 +56,3 @@ def get_all_classes(
     sys.path = origin_sys_path
     sys.modules = origin_modules
     return [c for c in classes.values()]
-
-
-if __name__ == "__main__":
-    # Пример использования скрипта
-    project_path = "/home/rahmaevao/Projects/clean_architecture/tests/mock_component"
-    result = get_all_classes(project_path)
-    for ss in result:
-        print(f"{ss=}")
-
-
-[
-    "/usr/lib/python310.zip",
-    "/usr/lib/python3.10",
-    "/usr/lib/python3.10/lib-dynload",
-    "/home/rahmaevao/Projects/clean_architecture/.venv/lib/python3.10/site-packages",
-    "/home/rahmaevao/Projects/clean_architecture/tests/mock_component",
-]
