@@ -10,6 +10,8 @@ from src.application.services.reader.inspector import get_all_classes
 class ProjectReader:
     def __init__(self, root_path: Path) -> None:
         self.__root_path = root_path
+        self.__ex_libs = self.__read_used_libraries()
+        self.__ex_libs |= self.__read_ignore_imports()
 
     def read_project(self) -> PythonProject:
         return PythonProject(
@@ -39,14 +41,11 @@ class ProjectReader:
         return raw_py_modules
 
     def _raw_read_all_py_modules(self) -> dict[ModuleName, PythonModule]:
-        ex_libs = self._read_used_libraries()
-        ex_libs |= self._read_ignore_imports()
-        logger.info(f"{ex_libs=}")
         all_modules = {}
         all_classes = get_all_classes(self.__root_path)
         for path in self._get_python_files():
             for using_class in all_classes:
-                if self._is_ex_lib(using_class.src_module_name, ex_libs):
+                if self.__is_ex_lib(using_class.src_module_name):
                     continue
                 for using_module_path in using_class.using_modules_paths:
                     if using_module_path == path:
@@ -93,18 +92,17 @@ class ProjectReader:
             self.__root_path / "main.py"
         }
 
-    @staticmethod
-    def _is_ex_lib(module_name: str, ex_libs: set[str]) -> bool:
-        return module_name.split(".")[0] in ex_libs
+    def __is_ex_lib(self, module_name: str) -> bool:
+        return module_name.split(".")[0] in self.__ex_libs
 
     @lru_cache
-    def _read_used_libraries(self) -> set[str]:
+    def __read_used_libraries(self) -> set[str]:
         with open(self.__root_path / "poetry.lock", "rb") as f:
             poetry_lock = tomli.load(f)["package"]
         pkgs = {pkg["name"].replace("-", "_") for pkg in poetry_lock}
         return pkgs | sys.stdlib_module_names
 
-    def _read_ignore_imports(self) -> set[str]:
+    def __read_ignore_imports(self) -> set[str]:
         with open(self.__root_path / "pyproject.toml", "rb") as f:
             pyproject = tomli.load(f)
         return set(
