@@ -19,28 +19,7 @@ class ProjectReader:
             path=self.__root_path,
         )
 
-    def __read_py_modules(self) -> list[PythonModule]:
-        raw_py_modules = self._raw_read_all_py_modules()
-        for py_module in raw_py_modules.values():
-            for i_m_name, i_entities in py_module.imported_entities.items():
-                try:
-                    raw_py_modules[i_m_name].exported_entities |= i_entities
-                except KeyError:
-                    logger.warning(f"Module {i_m_name} not found")
-                    pass
-
-        blank_modules = set()
-        for py_module in raw_py_modules.values():
-            if (
-                len(py_module.exported_entities) == 0
-                and len(py_module.imported_entities) == 0
-            ):
-                blank_modules.add(py_module.name)
-
-        [raw_py_modules.pop(b_m) for b_m in blank_modules]
-        return raw_py_modules
-
-    def _raw_read_all_py_modules(self) -> dict[ModuleName, PythonModule]:
+    def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
         all_modules = {}
         all_classes = get_all_classes(self.__root_path)
         for path in self._get_python_files():
