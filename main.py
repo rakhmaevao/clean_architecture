@@ -1,3 +1,6 @@
+import sys
+
+MAIN_MODULES = list(sys.modules.keys())
 from pathlib import Path
 from src.application.services.metrics import compute_short_metrics
 from src.application.services.reader.reader import read_project
@@ -13,7 +16,7 @@ projects = {
 
 
 for project_name, path in projects.items():
-    project = read_project(path)
+    project = read_project(path, MAIN_MODULES)
     metrics = compute_short_metrics(project)
     print(f"{project_name}: {metrics}")
     uml_drawer = UmlDrawer()

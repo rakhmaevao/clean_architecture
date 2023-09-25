@@ -1,3 +1,4 @@
+import copy
 from dataclasses import dataclass
 import importlib
 import os
@@ -20,19 +21,29 @@ class ClassSearchingResult:
     using_modules_paths: set[str]
 
 
-def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
+def get_all_classes(
+    project_path: Path, main_modules: list[str]
+) -> list[ClassSearchingResult]:
     classes: dict[ClassName, ClassSearchingResult] = dict()
+    origin_sys_path = copy.deepcopy(sys.path)
+    origin_modules = copy.copy(sys.modules)
 
+    sys.path.remove("/home/rahmaevao/Projects/clean_architecture")
+    new_modules = set(sys.modules) - set(main_modules)
+    [sys.modules.pop(m) for m in new_modules]
+    other_prj_modules = set()
     for root, _, files in os.walk(project_path):
         for file in files:
             if file.endswith(".py"):
-                sys.path.insert(0, root)
+                sys.path.append(root)
                 module_name = os.path.splitext(file)[0]
                 module_path = os.path.join(root, file)
-                logger.info(f"FFFFFF{module_path}")
+
+                logger.info(f"FFFFFF{module_path} {sys.path} {sys.modules}")
                 print(sys.path)
-                # module = importlib.import_module(module_path)
-                module = __import__(module_name)
+                module = importlib.import_module(module_name)
+                other_prj_modules.add(module_name)
+                # module = __import__(module_name)
 
                 # Ищем классы в модуле
                 for name, obj in inspect.getmembers(module):
@@ -45,8 +56,9 @@ def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
                             )
                         else:
                             classes[name].using_modules_paths.add(module_path)
-                # sys.path.remove(root)
-                # del sys.modules[module_name]
+
+    sys.path = origin_sys_path
+    sys.modules = origin_modules
     return [c for c in classes.values()]
 
 
@@ -59,12 +71,9 @@ if __name__ == "__main__":
 
 
 [
-    "/home/rahmaevao/Projects/clean_architecture",
     "/usr/lib/python310.zip",
     "/usr/lib/python3.10",
     "/usr/lib/python3.10/lib-dynload",
     "/home/rahmaevao/Projects/clean_architecture/.venv/lib/python3.10/site-packages",
     "/home/rahmaevao/Projects/clean_architecture/tests/mock_component",
-    "/home/rahmaevao/Projects/clean_architecture/tests/mock_component",
-    "/home/rahmaevao/Projects/clean_architecture/tests/mock_component/src",
 ]

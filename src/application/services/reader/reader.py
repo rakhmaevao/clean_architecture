@@ -20,11 +20,13 @@ def _get_python_files(root_path: Path) -> set[Path]:
     }
 
 
-def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
+def _raw_read_all_py_modules(
+    root_path: Path, main_modules: list[str]
+) -> dict[ModuleName, PythonModule]:
     ex_libs = _read_used_libraries(root_path)
     ex_libs |= _read_ignore_imports(root_path)
     all_modules = {}
-    all_classes = get_all_classes(root_path)
+    all_classes = get_all_classes(root_path, main_modules)
     for path in _get_python_files(root_path):
         for using_class in all_classes:
             src_class_module_name = _generate_module_name(
@@ -57,8 +59,8 @@ def _raw_read_all_py_modules(root_path: Path) -> dict[ModuleName, PythonModule]:
     return all_modules
 
 
-def _read_py_modules(root_path: Path) -> list[PythonModule]:
-    raw_py_modules = _raw_read_all_py_modules(root_path)
+def _read_py_modules(root_path: Path, main_modules: list[str]) -> list[PythonModule]:
+    raw_py_modules = _raw_read_all_py_modules(root_path, main_modules)
     for py_module in raw_py_modules.values():
         for i_m_name, i_entities in py_module.imported_entities.items():
             try:
@@ -79,9 +81,9 @@ def _read_py_modules(root_path: Path) -> list[PythonModule]:
     return raw_py_modules
 
 
-def read_project(root_path: Path) -> PythonProject:
+def read_project(root_path: Path, main_modules: list[str]) -> PythonProject:
     return PythonProject(
-        modules=_read_py_modules(root_path),
+        modules=_read_py_modules(root_path, main_modules),
         path=root_path,
     )
 

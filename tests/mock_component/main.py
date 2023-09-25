@@ -1,6 +1,6 @@
 import asyncio
 import os
-
+from src import a
 from src.app import Application
 from src.config import Config
 
