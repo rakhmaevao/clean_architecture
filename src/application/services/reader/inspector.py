@@ -21,16 +21,19 @@ class ClassSearchingResult:
     using_modules_paths: set[Path]
 
 
-def get_all_classes(
-    project_path: Path, main_modules: list[str]
-) -> list[ClassSearchingResult]:
+def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
     classes: dict[ClassName, ClassSearchingResult] = dict()
     origin_sys_path = copy.deepcopy(sys.path)
     origin_modules = copy.copy(sys.modules)
 
     sys.path.remove("/home/rahmaevao/Projects/clean_architecture")
-    new_modules = set(sys.modules) - set(main_modules)
-    [sys.modules.pop(m) for m in new_modules]
+
+    [
+        sys.modules.pop(m)
+        for m in sys.modules.copy()
+        if (m not in sys.stdlib_module_names) and (m != "os.path")
+    ]
+
     other_prj_modules = set()
     for root, _, files in os.walk(project_path):
         for file in files:
