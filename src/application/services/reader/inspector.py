@@ -21,12 +21,13 @@ class ClassSearchingResult:
     using_modules_paths: set[Path]
 
 
+
 def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
     classes: dict[ClassName, ClassSearchingResult] = dict()
     origin_sys_path = copy.deepcopy(sys.path)
     origin_modules = copy.copy(sys.modules)
 
-    sys.path.remove("/home/rahmaevao/Projects/clean_architecture")
+    sys.path.remove(os.getcwd())
 
     [
         sys.modules.pop(m)
