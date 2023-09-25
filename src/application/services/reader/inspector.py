@@ -9,13 +9,11 @@ from loguru import logger
 from typing import TypeAlias
 
 ClassName: TypeAlias = str
-SrcM: TypeAlias = str
-UsingM: TypeAlias = str
 
 
 @dataclass
 class ClassSearchingResult:
-    class_name: str
+    class_name: ClassName
     source_module_path: Path
     using_modules_paths: set[Path]
 
@@ -24,7 +22,7 @@ class ClassesSearchingResultVault:
     def __init__(self):
         self.classes: dict[ClassName, ClassSearchingResult] = dict()
 
-    def add(self, class_name: str, src_path: Path, using_path: Path):
+    def add(self, class_name: ClassName, src_path: Path, using_path: Path):
         if class_name not in self.classes:
             self.classes[class_name] = ClassSearchingResult(
                 class_name=class_name,
