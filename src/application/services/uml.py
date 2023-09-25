@@ -5,6 +5,7 @@ from src.infra import kroki
 class UmlDrawer:
     def draw(self, project: PythonProject, path: str):
         uml_code = self.__generate_uml(project)
+        print(uml_code)
         kroki.to_svg(uml_code, path)
 
     def __generate_uml(self, project: PythonProject) -> str:

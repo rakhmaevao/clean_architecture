@@ -8,7 +8,7 @@ from src.application.services.reader.inspector import get_all_classes
 
 
 def _generate_module_name(path: Path, root_path: Path) -> str:
-    m_name = path.relative_to(root_path).with_suffix("").as_posix().replace("/", ".")
+    m_name = path.with_suffix("").as_posix().replace("/", ".")[1:]
     if m_name.split(".")[-1] == "__init__":
         m_name = ".".join(m_name.split(".")[:-1])
     return m_name

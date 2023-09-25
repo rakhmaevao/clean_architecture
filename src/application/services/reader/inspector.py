@@ -17,8 +17,8 @@ UsingM: TypeAlias = str
 @dataclass
 class ClassSearchingResult:
     class_name: str
-    source_module_path: str
-    using_modules_paths: set[str]
+    source_module_path: Path
+    using_modules_paths: set[Path]
 
 
 def get_all_classes(
@@ -44,14 +44,19 @@ def get_all_classes(
                 # Ищем классы в модуле
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj):
+                        source_module_path = Path(inspect.getfile(obj))
+                        if source_module_path.is_relative_to(
+                            "/home/rahmaevao/Projects/clean_architecture/.venv"
+                        ):
+                            continue
                         if name not in classes:
                             classes[name] = ClassSearchingResult(
                                 class_name=name,
-                                source_module_path=inspect.getfile(obj),
-                                using_modules_paths=set([module_path]),
+                                source_module_path=source_module_path,
+                                using_modules_paths=set([Path(module_path)]),
                             )
                         else:
-                            classes[name].using_modules_paths.add(module_path)
+                            classes[name].using_modules_paths.add(Path(module_path))
 
     sys.path = origin_sys_path
     sys.modules = origin_modules
