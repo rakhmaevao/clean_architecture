@@ -14,7 +14,8 @@ ClassName: TypeAlias = str
 @dataclass
 class ClassSearchingResult:
     class_name: ClassName
-    source_module_path: Path
+    src_module_path: Path
+    src_module_name: str
     using_modules_paths: set[Path]
 
 
@@ -22,11 +23,18 @@ class ClassesSearchingResultVault:
     def __init__(self):
         self.classes: dict[ClassName, ClassSearchingResult] = dict()
 
-    def add(self, class_name: ClassName, src_path: Path, using_path: Path):
+    def add(
+        self,
+        class_name: ClassName,
+        src_module_path: Path,
+        using_path: Path,
+        src_module_name,
+    ):
         if class_name not in self.classes:
             self.classes[class_name] = ClassSearchingResult(
                 class_name=class_name,
-                source_module_path=src_path,
+                src_module_path=src_module_path,
+                src_module_name=src_module_name,
                 using_modules_paths=set([using_path]),
             )
         else:
@@ -56,14 +64,12 @@ def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
 
                 for name, obj in inspect.getmembers(import_module(module_name)):
                     if inspect.isclass(obj):
-                        src_path = Path(inspect.getfile(obj))
-                        if src_path.is_relative_to(
-                            "/home/rahmaevao/Projects/clean_architecture/.venv"
-                        ):
-                            continue
-
-                        module_path = os.path.join(root, file)
-                        classes.add(name, Path(src_path), Path(module_path))
+                        classes.add(
+                            class_name=name,
+                            src_module_name=inspect.getmodule(obj).__name__,
+                            src_module_path=Path(inspect.getfile(obj)),
+                            using_path=Path(os.path.join(root, file)),
+                        )
 
     sys.path = origin_sys_path
     sys.modules = origin_modules
