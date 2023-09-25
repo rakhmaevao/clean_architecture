@@ -20,6 +20,24 @@ class ClassSearchingResult:
     using_modules_paths: set[Path]
 
 
+class ClassesSearchingResultVault:
+    def __init__(self):
+        self.classes: dict[ClassName, ClassSearchingResult] = dict()
+
+    def add(self, class_name: str, src_path: Path, using_path: Path):
+        if class_name not in self.classes:
+            self.classes[class_name] = ClassSearchingResult(
+                class_name=class_name,
+                source_module_path=src_path,
+                using_modules_paths=set([using_path]),
+            )
+        else:
+            self.classes[class_name].using_modules_paths.add(using_path)
+
+    def values(self) -> list[ClassSearchingResult]:
+        return list(self.classes.values())
+
+
 def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
     origin_sys_path = copy.deepcopy(sys.path)
     sys.path.remove(os.getcwd())
@@ -31,7 +49,7 @@ def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
         if (m not in sys.stdlib_module_names) and (m != "os.path")
     ]
 
-    classes: dict[ClassName, ClassSearchingResult] = dict()
+    classes = ClassesSearchingResultVault()
     for root, _, files in os.walk(project_path):
         for file in files:
             if file.endswith(".py"):
@@ -47,14 +65,7 @@ def get_all_classes(project_path: Path) -> list[ClassSearchingResult]:
                             continue
 
                         module_path = os.path.join(root, file)
-                        if name not in classes:
-                            classes[name] = ClassSearchingResult(
-                                class_name=name,
-                                source_module_path=src_path,
-                                using_modules_paths=set([Path(module_path)]),
-                            )
-                        else:
-                            classes[name].using_modules_paths.add(Path(module_path))
+                        classes.add(name, Path(src_path), Path(module_path))
 
     sys.path = origin_sys_path
     sys.modules = origin_modules
