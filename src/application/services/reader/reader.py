@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from src.application.services.reader.inspector import (
     EntitySearchingResult,
-    get_all_classes,
+    get_all_entities,
 )
 
 
@@ -48,7 +48,7 @@ class ProjectReader:
                 ] = set([(using_entity.kind, using_entity.name)])
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
-        all_classes = get_all_classes(self.__root_path)
+        all_classes = get_all_entities(self.__root_path)
         for path in self._get_python_files():
             for using_class in all_classes:
                 if self.__is_ex_lib(using_class.src_module_name):
@@ -84,7 +84,10 @@ class ProjectReader:
         }
 
     def __is_ex_lib(self, module_name: str) -> bool:
-        return module_name.split(".")[0] in self.__ex_libs
+        try:
+            return module_name.split(".")[0] in self.__ex_libs
+        except Exception:
+            return True
 
     @lru_cache
     def __read_used_libraries(self) -> set[str]:
