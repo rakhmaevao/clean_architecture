@@ -7,13 +7,13 @@ readme = "README.md"
 packages = [{include = "clean_architecture"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 pydeps = "^1.12.12"
 tomli = "^2.0.1"
 requests = "^2.31.0"
 loguru = "^0.7.0"
 dash = "^2.11.1"
-pandas = "^2.0.3"
+pandas = "^2.1.0"
 pyparsing = "^3.1.0"
 
 

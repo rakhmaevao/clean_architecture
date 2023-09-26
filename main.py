@@ -18,8 +18,8 @@ projects = {
 for project_name, path in projects.items():
     project = ProjectReader(path).read_project()
     # metrics = compute_short_metrics(project)
-    # metrics = compute_metrics(project)
-    # print(metrics)
+    metrics = compute_metrics(project)
+    print(metrics.to_string())
     # [print(f"{modd.name}\t{modd.instability}") for modd in project.modules.values()]
     # print(metrics)
     # print(f"{project_name}: {metrics}")

@@ -10,17 +10,17 @@ def compute_metrics(project: PythonProject) -> pd.DataFrame:
     """
     return pd.concat(
         [
-            pd.DataFrame.from_dict(
+            pd.DataFrame(
                 {
-                    "component": [module.name],
-                    # "I": [module.instability],
+                    # "component": [module.name],
+                    "I": [module.full_instability],
                     # "A": [module.abstractness],
                     # "D": [module.distance],
                 }
             )
             for module in project.modules.values()
         ],
-        ignore_index=True,
+        # ignore_index=True,
     )
 
 
