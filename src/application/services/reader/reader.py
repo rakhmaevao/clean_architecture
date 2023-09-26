@@ -64,7 +64,7 @@ class ProjectReader:
             path.relative_to(self.__root_path)
             .with_suffix("")
             .as_posix()
-            .replace("/", ".")[1:]
+            .replace("/", ".")
         )
         if m_name.split(".")[-1] == "__init__":
             m_name = ".".join(m_name.split(".")[:-1])

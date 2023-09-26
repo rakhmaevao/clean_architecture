@@ -1,4 +1,6 @@
 from pathlib import Path
+from pprint import pprint
+from loguru import logger
 from src.application.services.metrics import compute_short_metrics
 from src.application.services.reader.reader import ProjectReader
 from src.application.services.uml import UmlDrawer
@@ -16,8 +18,9 @@ for project_name, path in projects.items():
     project = ProjectReader(path).read_project()
     # metrics = compute_short_metrics(project)
     # print(f"{project_name}: {metrics}")
-    uml_drawer = UmlDrawer()
-    uml_drawer.draw(
-        project,
-        f"{project_name}.svg",
-    )
+    pprint(project)
+    # uml_drawer = UmlDrawer()
+    # uml_drawer.draw(
+    #     project,
+    #     f"{project_name}.svg",
+    # )
