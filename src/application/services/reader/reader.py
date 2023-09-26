@@ -4,7 +4,10 @@ import tomli
 from functools import lru_cache
 import sys
 from pathlib import Path
-from src.application.services.reader.inspector import get_all_classes
+from src.application.services.reader.inspector import (
+    ClassSearchingResult,
+    get_all_classes,
+)
 
 
 class ProjectReader:
@@ -12,6 +15,7 @@ class ProjectReader:
         self.__root_path = root_path
         self.__ex_libs = self.__read_used_libraries()
         self.__ex_libs |= self.__read_ignore_imports()
+        self.__all_modules = {}
 
     def read_project(self) -> PythonProject:
         return PythonProject(
@@ -19,8 +23,32 @@ class ProjectReader:
             path=self.__root_path,
         )
 
+    def __add_module(self, path: str, using_class: ClassSearchingResult):
+        module_name = self._generate_module_name(path)
+        src_class_module_name = self._generate_module_name(using_class.src_module_path)
+        if module_name not in self.__all_modules:
+            self.__all_modules[module_name] = PythonModule(
+                name=module_name,
+                path=path,
+                imported_entities={
+                    src_class_module_name: set([using_class.class_name])
+                },
+                exported_entities=set(),
+            )
+        else:
+            if (
+                src_class_module_name
+                in self.__all_modules[module_name].imported_entities
+            ):
+                self.__all_modules[module_name].imported_entities[
+                    src_class_module_name
+                ].add(using_class.class_name)
+            else:
+                self.__all_modules[module_name].imported_entities[
+                    src_class_module_name
+                ] = set([using_class.class_name])
+
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
-        all_modules = {}
         all_classes = get_all_classes(self.__root_path)
         for path in self._get_python_files():
             for using_class in all_classes:
@@ -28,32 +56,8 @@ class ProjectReader:
                     continue
                 for using_module_path in using_class.using_modules_paths:
                     if using_module_path == path:
-                        src_class_module_name = self._generate_module_name(
-                            using_class.src_module_path
-                        )
-                        module_name = self._generate_module_name(path)
-                        if module_name not in all_modules:
-                            all_modules[module_name] = PythonModule(
-                                name=module_name,
-                                path=path,
-                                imported_entities={
-                                    src_class_module_name: set([using_class.class_name])
-                                },
-                                exported_entities=set(),
-                            )
-                        else:
-                            if (
-                                src_class_module_name
-                                in all_modules[module_name].imported_entities
-                            ):
-                                all_modules[module_name].imported_entities[
-                                    src_class_module_name
-                                ].add(using_class.class_name)
-                            else:
-                                all_modules[module_name].imported_entities[
-                                    src_class_module_name
-                                ] = set([using_class.class_name])
-        return all_modules
+                        self.__add_module(path, using_class)
+        return self.__all_modules
 
     def _generate_module_name(self, path: Path) -> str:
         m_name = (
