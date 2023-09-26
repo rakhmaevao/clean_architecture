@@ -48,14 +48,14 @@ class ProjectReader:
                 ] = set([(using_entity.kind, using_entity.name)])
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
-        all_classes = get_all_entities(self.__root_path)
+        all_entities = get_all_entities(self.__root_path)
         for path in self._get_python_files():
-            for using_class in all_classes:
-                if self.__is_ex_lib(using_class.src_module_name):
+            for using_entity in all_entities:
+                if self.__is_ex_lib(using_entity.src_module_name):
                     continue
-                for using_module_path in using_class.using_modules_paths:
+                for using_module_path in using_entity.using_modules_paths:
                     if using_module_path == path:
-                        self.__add_module(path, using_class)
+                        self.__add_module(path, using_entity)
         self.__set_exported_relationships()
         return self.__all_modules
 
