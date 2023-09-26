@@ -13,6 +13,7 @@ EntityName: TypeAlias = str
 
 class EntityKind(Enum):
     CLASS = "class"
+    ABSTRACT = "abstract"
     FUNCTION = "function"
     VARIABLE = "variable"
 

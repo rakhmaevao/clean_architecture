@@ -94,11 +94,13 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
     sys.modules = origin_modules
 
     entities = _set_src_for_globals(entities, project_path)
-
+    entities = _set_abc(entities)
     return [c for c in entities.values()]
 
 
-def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: Path):
+def _set_src_for_globals(
+    entities: EntitiesSearchingResultVault, project_path: Path
+) -> EntitiesSearchingResultVault:
     for entity in entities.values():
         if entity.kind is EntityKind.VARIABLE:
             pass
@@ -121,4 +123,19 @@ def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: P
                                     and target.id == entity.name
                                 ):
                                     entity.src_module_path = Path(f"{root}/{filename}")
+    return entities
+
+
+def _set_abc(entities: EntitiesSearchingResultVault) -> EntitiesSearchingResultVault:
+    for entity in entities.values():
+        if entity.kind is not EntityKind.CLASS:
+            continue
+        with open(entity.src_module_path, "r") as file:
+            code = file.read()
+        tree = ast.parse(code)
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef) and node.name == entity.name:
+                if any([n.id == "ABC" for n in node.bases if isinstance(n, ast.Name)]):
+                    entity.kind = EntityKind.ABSTRACT
+
     return entities
