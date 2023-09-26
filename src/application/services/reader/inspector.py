@@ -120,8 +120,5 @@ def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: P
                                     entity.kind is EntityKind.VARIABLE
                                     and target.id == entity.name
                                 ):
-                                    logger.info(
-                                        f"Finded {entity.name} {root}/{filename}"
-                                    )
                                     entity.src_module_path = Path(f"{root}/{filename}")
     return entities
