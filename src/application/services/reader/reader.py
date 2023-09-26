@@ -5,7 +5,7 @@ from functools import lru_cache
 import sys
 from pathlib import Path
 from src.application.services.reader.inspector import (
-    ClassSearchingResult,
+    EntitySearchingResult,
     get_all_classes,
 )
 
@@ -23,7 +23,7 @@ class ProjectReader:
             path=self.__root_path,
         )
 
-    def __add_module(self, path: Path, using_class: ClassSearchingResult):
+    def __add_module(self, path: Path, using_class: EntitySearchingResult):
         module_name = self._generate_module_name(path)
         src_module_name = self._generate_module_name(using_class.src_module_path)
         if src_module_name == module_name:
@@ -32,18 +32,18 @@ class ProjectReader:
             self.__all_modules[module_name] = PythonModule(
                 name=module_name,
                 path=path.relative_to(self.__root_path),
-                imported_entities={src_module_name: set([using_class.class_name])},
+                imported_entities={src_module_name: set([using_class.entity_name])},
                 exported_entities=set(),
             )
         else:
             if src_module_name in self.__all_modules[module_name].imported_entities:
                 self.__all_modules[module_name].imported_entities[src_module_name].add(
-                    using_class.class_name
+                    using_class.entity_name
                 )
             else:
                 self.__all_modules[module_name].imported_entities[
                     src_module_name
-                ] = set([using_class.class_name])
+                ] = set([using_class.entity_name])
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
         all_classes = get_all_classes(self.__root_path)
