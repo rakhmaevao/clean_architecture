@@ -1,4 +1,4 @@
-from src.application.parser import parse_message
+from src.application.parser import parse_message, some_variable
 
 from fastapi import APIRouter, Response, status
 
@@ -13,5 +13,5 @@ def ping():
 
 @router.post("/parse_message/{message}")
 def parse(message: str):
-    result = parse_message(raw_str=message)
+    result = parse_message(raw_str=message + some_variable)
     return Response(status_code=status.HTTP_200_OK, content=result.content)

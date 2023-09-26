@@ -61,8 +61,9 @@ def get_all_classes(project_path: Path) -> list[EntitySearchingResult]:
         for m in sys.modules.copy()
         if (m not in sys.stdlib_module_names) and (m != "os.path")
     ]
-
+    
     entities = EntitiesSearchingResultVault()
+    global_variables = set()
     for root, _, files in os.walk(project_path):
         for file in files:
             if file.endswith(".py"):
@@ -70,14 +71,44 @@ def get_all_classes(project_path: Path) -> list[EntitySearchingResult]:
                 module_name = os.path.splitext(file)[0]
 
                 for name, obj in inspect.getmembers(import_module(module_name)):
-                    if inspect.isclass(obj):
-                        entities.add(
-                            entity_name=name,
-                            entity_type=EntityKind.CLASS,
-                            src_module_name=inspect.getmodule(obj).__name__,
-                            src_module_path=Path(inspect.getfile(obj)),
-                            using_path=Path(os.path.join(root, file)),
-                        )
+                    # if inspect.isclass(obj):
+                    #     entities.add(
+                    #         entity_name=name,
+                    #         entity_type=EntityKind.CLASS,
+                    #         src_module_name=inspect.getmodule(obj).__name__,
+                    #         src_module_path=Path(inspect.getfile(obj)),
+                    #         using_path=Path(os.path.join(root, file)),
+                    #     )
+                    # elif inspect.isfunction(obj):
+                    #     entities.add(
+                    #         entity_name=name,
+                    #         entity_type=EntityKind.FUNCTION,
+                    #         src_module_name=inspect.getmodule(obj).__name__,
+                    #         src_module_path=Path(inspect.getfile(obj)),
+                    #         using_path=Path(os.path.join(root, file)),
+                    #     )
+                    if not name.startswith('__') and not inspect.ismodule(obj) and not inspect.isclass(obj) and not inspect.isfunction(obj):
+                        # frame = inspect.currentframe()
+                        # while frame:
+                        #     if name in frame.f_globals:
+                        #         module = inspect.getmodule(frame)
+                        #         if module:
+                        #             logger.info(f" {module.__file__}")
+                        #     frame = frame.f_back
+                        # return None
+                        global_variables.add(name)
+                        logger.info(f"QQQQQQQQQQ {name} {file} {obj} {inspect.getmodule(obj)}")
+                frame = inspect.currentframe()
+                while frame:
+                    logger.info(f"{frame.f_globals=}")
+                        # logger.info(f"QQQQQQQQQQ{name} {Path(inspect.getfile(obj))}")
+                        # entities.add(
+                        #     entity_name=name,
+                        #     entity_type=EntityKind.VARIABLE,
+                        #     src_module_name=inspect.getmodule(obj).__name__,
+                        #     src_module_path=Path(inspect.getfile(obj)),
+                        #     using_path=Path(os.path.join(root, file)),
+                        # )
 
     sys.path = origin_sys_path
     sys.modules = origin_modules
