@@ -31,7 +31,7 @@ class EntitiesSearchingResultVault:
         entity_name: EntityName,
         entity_type: EntityKind,
         src_module_path: Path | None,
-        using_path: Path
+        using_path: Path,
     ):
         if entity_name not in self.entities:
             self.entities[entity_name] = EntitySearchingResult(
@@ -94,16 +94,17 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
 
     return [c for c in entities.values()]
 
+
 def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: Path):
     for entity in entities.values():
         if entity.kind is EntityKind.VARIABLE:
             pass
-    
+
     for root, _, files in os.walk(project_path):
         for filename in files:
             if not filename.endswith(".py"):
                 continue
-            with open(f"{root}/{filename}", 'r') as file:
+            with open(f"{root}/{filename}", "r") as file:
                 code = file.read()
 
             tree = ast.parse(code)
@@ -112,7 +113,12 @@ def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: P
                     for target in node.targets:
                         if isinstance(target, ast.Name):
                             for entity in entities.values():
-                                if entity.kind is EntityKind.VARIABLE and target.id == entity.name:
-                                    logger.info(f"Finded {entity.name} {root}/{filename}")
+                                if (
+                                    entity.kind is EntityKind.VARIABLE
+                                    and target.id == entity.name
+                                ):
+                                    logger.info(
+                                        f"Finded {entity.name} {root}/{filename}"
+                                    )
                                     entity.src_module_path = Path(f"{root}/{filename}")
     return entities

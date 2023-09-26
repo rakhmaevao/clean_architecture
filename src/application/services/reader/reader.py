@@ -26,9 +26,16 @@ class ProjectReader:
     def __add_module(self, path: Path, using_entity: EntitySearchingResult):
         module_name = self._generate_module_name(path)
         src_module_name = self._generate_module_name(using_entity.src_module_path)
-        if src_module_name == module_name:
-            return
-        if module_name not in self.__all_modules:
+        logger.info(f"QQQQ {module_name} {using_entity}")
+        if module_name == src_module_name:
+            if module_name not in self.__all_modules:
+                self.__all_modules[module_name] = PythonModule(
+                    name=module_name,
+                    path=path.relative_to(self.__root_path),
+                    imported_entities=dict(),
+                    exported_entities=set(),
+                )
+        elif module_name not in self.__all_modules:
             self.__all_modules[module_name] = PythonModule(
                 name=module_name,
                 path=path.relative_to(self.__root_path),
@@ -60,12 +67,13 @@ class ProjectReader:
         return self.__all_modules
 
     def __set_exported_relationships(self):
-        for module in self.__all_modules.values():
-            for other_module in self.__all_modules.values():
-                if module.name in other_module.imported_entities.keys():
-                    module.exported_entities |= other_module.imported_entities[
-                        module.name
-                    ]
+        pass
+        # for module in self.__all_modules.values():
+        #     for other_module in self.__all_modules.values():
+        #         if module.name in other_module.imported_entities.keys():
+        #             module.exported_entities |= other_module.imported_entities[
+        #                 module.name
+        #             ]
 
     def _generate_module_name(self, path: Path) -> str:
         m_name = (

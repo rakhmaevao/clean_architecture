@@ -19,8 +19,8 @@ for project_name, path in projects.items():
     # metrics = compute_short_metrics(project)
     # print(f"{project_name}: {metrics}")
     pprint(project)
-    # uml_drawer = UmlDrawer()
-    # uml_drawer.draw(
-    #     project,
-    #     f"{project_name}.svg",
-    # )
+    uml_drawer = UmlDrawer()
+    uml_drawer.draw(
+        project,
+        f"{project_name}.svg",
+    )
