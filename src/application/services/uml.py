@@ -23,7 +23,7 @@ class UmlDrawer:
         return (
             f"{module.name} \\n"
             f"Path: {module.path} \\n"
-            f"I = {module.instability} \\n"
+            f"I = {module.full_instability} \\n"
             f"A = {module.abstractness} \\n"
             f"++++++++ \\n"
             f"External used entities: {module.exported_entities} \\n"

@@ -13,9 +13,9 @@ def compute_metrics(project: PythonProject) -> pd.DataFrame:
             pd.DataFrame.from_dict(
                 {
                     "component": [module.name],
-                    "I": [module.instability],
-                    "A": [module.abstractness],
-                    "D": [module.distance],
+                    # "I": [module.instability],
+                    # "A": [module.abstractness],
+                    # "D": [module.distance],
                 }
             )
             for module in project.modules.values()

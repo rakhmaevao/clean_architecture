@@ -66,13 +66,12 @@ class ProjectReader:
         return self.__all_modules
 
     def __set_exported_relationships(self):
-        pass
-        # for module in self.__all_modules.values():
-        #     for other_module in self.__all_modules.values():
-        #         if module.name in other_module.imported_entities.keys():
-        #             module.exported_entities |= other_module.imported_entities[
-        #                 module.name
-        #             ]
+        for module in self.__all_modules.values():
+            for other_module in self.__all_modules.values():
+                if module.name in other_module.imported_entities.keys():
+                    module.exported_entities |= other_module.imported_entities[
+                        module.name
+                    ]
 
     def _generate_module_name(self, path: Path) -> str:
         m_name = (

@@ -28,7 +28,8 @@ class PythonModule:
         return asdict(self)
 
     @property
-    def instability(self):
+    def full_instability(self):
+        """Возвращает неустойчивость модуля по всем сущностям в нем."""
         fan_out = len(self.exported_entities)
         fan_in = sum(
             [len(self.imported_entities.get(m)) for m in self.imported_entities]
@@ -51,7 +52,7 @@ class PythonModule:
 
     @property
     def distance(self) -> float:
-        return abs(self.instability + self.abstractness - 1)
+        return abs(self.full_instability + self.abstractness - 1)
 
     @staticmethod
     def _num_occurrences(path: Path, string: str, exclude: list[str] = []) -> int:
