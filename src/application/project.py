@@ -1,6 +1,5 @@
 from __future__ import annotations
 from enum import Enum
-from functools import cached_property
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,7 +44,33 @@ class PythonModule:
         except ZeroDivisionError:
             return 0.0
 
-    @cached_property
+    @property
+    def class_instability(self):
+        fan_out = len(
+            [
+                c
+                for c in self.exported_entities
+                if c.kind == EntityKind.CLASS or c.kind == EntityKind.ABSTRACT
+            ]
+        )
+        fan_in = sum(
+            [
+                len(
+                    [
+                        c
+                        for c in self.imported_entities.get(m)
+                        if c.kind == EntityKind.CLASS or c.kind == EntityKind.ABSTRACT
+                    ]
+                )
+                for m in self.imported_entities
+            ]
+        )
+        try:
+            return fan_out / (fan_in + fan_out)
+        except ZeroDivisionError:
+            return 0.0
+
+    @property
     def abstractness(self):
         num_classes = len(
             [c for c in self.exported_entities if c.kind == EntityKind.CLASS]
@@ -60,29 +85,7 @@ class PythonModule:
 
     @property
     def distance(self) -> float:
-        return abs(self.full_instability + self.abstractness - 1)
-
-    @staticmethod
-    def _num_occurrences(path: Path, string: str, exclude: list[str] = []) -> int:
-        result = subprocess.run(
-            f"grep {string} {path}",
-            shell=True,
-            capture_output=True,
-            encoding="utf-8",
-        )
-
-        if result.returncode != 0:
-            return 0
-
-        num = 0
-        for line in result.stdout.splitlines():
-            num += 1
-            for ex in exclude:
-                if ex == line:
-                    num -= 1
-                    break
-
-        return num
+        return abs(self.class_instability + self.abstractness - 1)
 
 
 @dataclass
