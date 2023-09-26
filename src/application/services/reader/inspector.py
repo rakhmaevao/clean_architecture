@@ -8,20 +8,15 @@ import sys
 from pathlib import Path
 from loguru import logger
 from typing import TypeAlias
+from src.application.project import EntityKind
 
 EntityName: TypeAlias = str
 
 
-class EntityType(Enum):
-    CLASS = "class"
-    FUNCTION = "function"
-    VARIABLE = "variable"
-
-
 @dataclass
 class EntitySearchingResult:
-    entity_name: EntityName
-    entity_type: EntityType
+    name: EntityName
+    kind: EntityKind
     src_module_path: Path
     src_module_name: str
     using_modules_paths: set[Path]
@@ -34,15 +29,15 @@ class EntitiesSearchingResultVault:
     def add(
         self,
         entity_name: EntityName,
-        entity_type: EntityType,
+        entity_type: EntityKind,
         src_module_path: Path,
         using_path: Path,
         src_module_name,
     ):
         if entity_name not in self.entities:
             self.entities[entity_name] = EntitySearchingResult(
-                entity_name=entity_name,
-                entity_type=entity_type,
+                name=entity_name,
+                kind=entity_type,
                 src_module_path=src_module_path,
                 src_module_name=src_module_name,
                 using_modules_paths=set([using_path]),
@@ -76,7 +71,7 @@ def get_all_classes(project_path: Path) -> list[EntitySearchingResult]:
                     if inspect.isclass(obj):
                         entities.add(
                             entity_name=name,
-                            entity_type=EntityType.CLASS,
+                            entity_type=EntityKind.CLASS,
                             src_module_name=inspect.getmodule(obj).__name__,
                             src_module_path=Path(inspect.getfile(obj)),
                             using_path=Path(os.path.join(root, file)),

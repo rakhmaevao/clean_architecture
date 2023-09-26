@@ -23,27 +23,29 @@ class ProjectReader:
             path=self.__root_path,
         )
 
-    def __add_module(self, path: Path, using_class: EntitySearchingResult):
+    def __add_module(self, path: Path, using_entity: EntitySearchingResult):
         module_name = self._generate_module_name(path)
-        src_module_name = self._generate_module_name(using_class.src_module_path)
+        src_module_name = self._generate_module_name(using_entity.src_module_path)
         if src_module_name == module_name:
             return
         if module_name not in self.__all_modules:
             self.__all_modules[module_name] = PythonModule(
                 name=module_name,
                 path=path.relative_to(self.__root_path),
-                imported_entities={src_module_name: set([using_class.entity_name])},
+                imported_entities={
+                    src_module_name: set([(using_entity.kind, using_entity.name)])
+                },
                 exported_entities=set(),
             )
         else:
             if src_module_name in self.__all_modules[module_name].imported_entities:
                 self.__all_modules[module_name].imported_entities[src_module_name].add(
-                    using_class.entity_name
+                    (using_entity.kind, using_entity.name)
                 )
             else:
                 self.__all_modules[module_name].imported_entities[
                     src_module_name
-                ] = set([using_class.entity_name])
+                ] = set([(using_entity.kind, using_entity.name)])
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
         all_classes = get_all_classes(self.__root_path)

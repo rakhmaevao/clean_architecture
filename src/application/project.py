@@ -1,4 +1,5 @@
 from __future__ import annotations
+from enum import Enum
 from functools import cached_property
 import subprocess
 from dataclasses import dataclass
@@ -10,11 +11,17 @@ ModuleName: TypeAlias = str
 EntityName: TypeAlias = str
 
 
+class EntityKind(Enum):
+    CLASS = "class"
+    FUNCTION = "function"
+    VARIABLE = "variable"
+
+
 @dataclass
 class PythonModule:
     name: str
     path: str
-    imported_entities: dict[ModuleName, set[EntityName]]
+    imported_entities: dict[ModuleName, set[tuple(EntityKind, EntityName)]]
     exported_entities: set[EntityName]
 
     def to_dict(self):
