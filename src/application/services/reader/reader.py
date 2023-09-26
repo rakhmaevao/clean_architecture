@@ -15,7 +15,7 @@ class ProjectReader:
         self.__root_path = root_path
         self.__ex_libs = self.__read_used_libraries()
         self.__ex_libs |= self.__read_ignore_imports()
-        self.__all_modules = {}
+        self.__all_modules: dict[ModuleName, PythonModule] = {}
 
     def read_project(self) -> PythonProject:
         return PythonProject(
@@ -54,7 +54,16 @@ class ProjectReader:
                 for using_module_path in using_class.using_modules_paths:
                     if using_module_path == path:
                         self.__add_module(path, using_class)
+        self.__set_exported_relationships()
         return self.__all_modules
+
+    def __set_exported_relationships(self):
+        for module in self.__all_modules.values():
+            for other_module in self.__all_modules.values():
+                if module.name in other_module.imported_entities.keys():
+                    module.exported_entities |= other_module.imported_entities[
+                        module.name
+                    ]
 
     def _generate_module_name(self, path: Path) -> str:
         m_name = (
