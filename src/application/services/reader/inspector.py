@@ -1,3 +1,4 @@
+import ast
 import copy
 from dataclasses import dataclass
 from enum import Enum
@@ -92,7 +93,32 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
                             src_module_path=None,
                             using_path=Path(os.path.join(root, file)),
                         )
-    logger.info([e for e in entities.values()])
     sys.path = origin_sys_path
     sys.modules = origin_modules
+
+    entities = _set_src_for_globals(entities, project_path)
+
     return [c for c in entities.values()]
+
+def _set_src_for_globals(entities: EntitiesSearchingResultVault, project_path: Path):
+    for entity in entities.values():
+        if entity.kind is EntityKind.VARIABLE:
+            pass
+    
+    for root, _, files in os.walk(project_path):
+        for filename in files:
+            if not filename.endswith(".py"):
+                continue
+            with open(f"{root}/{filename}", 'r') as file:
+                code = file.read()
+
+            tree = ast.parse(code)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Assign):
+                    for target in node.targets:
+                        if isinstance(target, ast.Name):
+                            for entity in entities.values():
+                                if entity.kind is EntityKind.VARIABLE and target.id == entity.name:
+                                    logger.info(f"Finded {entity.name} {root}/{filename}")
+                                    entity.src_module_path = Path(f"{root}/{filename}")
+    return entities
