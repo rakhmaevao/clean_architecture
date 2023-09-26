@@ -30,10 +30,12 @@ class EntitiesSearchingResultVault:
         self,
         entity_name: EntityName,
         entity_type: EntityKind,
-        src_module_path: Path,
+        src_module_path: Path | None,
         using_path: Path,
         src_module_name,
     ):
+        if src_module_path is None:
+            raise ValueError("src_module_path is None")
         if entity_name not in self.entities:
             self.entities[entity_name] = EntitySearchingResult(
                 name=entity_name,

@@ -20,7 +20,7 @@ class EntityKind(Enum):
 @dataclass
 class PythonModule:
     name: str
-    path: str
+    path: Path
     imported_entities: dict[ModuleName, set[tuple[EntityKind, EntityName]]]
     exported_entities: set[EntityName]
 
@@ -54,7 +54,7 @@ class PythonModule:
         return abs(self.instability + self.abstractness - 1)
 
     @staticmethod
-    def _num_occurrences(path: str, string: str, exclude: list[str] = []) -> int:
+    def _num_occurrences(path: Path, string: str, exclude: list[str] = []) -> int:
         result = subprocess.run(
             f"grep {string} {path}",
             shell=True,
