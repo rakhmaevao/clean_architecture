@@ -23,13 +23,15 @@ class ProjectReader:
             path=self.__root_path,
         )
 
-    def __add_module(self, path: str, using_class: ClassSearchingResult):
+    def __add_module(self, path: Path, using_class: ClassSearchingResult):
         module_name = self._generate_module_name(path)
         src_class_module_name = self._generate_module_name(using_class.src_module_path)
+        if src_class_module_name == module_name:
+            return
         if module_name not in self.__all_modules:
             self.__all_modules[module_name] = PythonModule(
                 name=module_name,
-                path=path,
+                path=path.relative_to(self.__root_path),
                 imported_entities={
                     src_class_module_name: set([using_class.class_name])
                 },
