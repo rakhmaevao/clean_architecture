@@ -21,7 +21,7 @@ class EntityKind(Enum):
 class PythonModule:
     name: str
     path: str
-    imported_entities: dict[ModuleName, set[tuple(EntityKind, EntityName)]]
+    imported_entities: dict[ModuleName, set[tuple[EntityKind, EntityName]]]
     exported_entities: set[EntityName]
 
     def to_dict(self):

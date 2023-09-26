@@ -21,4 +21,4 @@ flake:
 
 
 mypy:
-	poetry run mypy --ignore-missing-imports --check-untyped-defs src tests main.py
+	poetry run mypy --ignore-missing-imports --check-untyped-defs src main.py

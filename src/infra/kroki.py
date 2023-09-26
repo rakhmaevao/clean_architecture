@@ -13,7 +13,7 @@ def _encode_code(code: str) -> str:
 def _draw_plantuml(code: str) -> bytes:
     response = requests.get(f"https://kroki.io/plantuml/svg/{_encode_code(code)}")
     if response.status_code != 200:
-        raise RuntimeError(f"Request GET failed {response.content}")
+        raise RuntimeError(f"Request GET failed {response.content.decode('utf-8')}")
     return response.content
 
 

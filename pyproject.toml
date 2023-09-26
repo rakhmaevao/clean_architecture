@@ -35,6 +35,7 @@ flake8-warnings = "^0.4.0"
 flake8-comprehensions = "^3.13.0"
 flake8-eradicate = "^1.5.0"
 isort = "^5.12.0"
+types-requests = "^2.31.0.5"
 
 [build-system]
 requires = ["poetry-core"]
