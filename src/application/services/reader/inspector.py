@@ -66,6 +66,9 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
                 module_name = os.path.splitext(file)[0]
 
                 for name, obj in inspect.getmembers(import_module(module_name)):
+                    if inspect.ismodule(obj):
+                        # TODO: Для случая form pkg import module
+                        pass
                     if inspect.isclass(obj):
                         entities.add(
                             entity_name=name,

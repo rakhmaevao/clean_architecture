@@ -26,7 +26,6 @@ class ProjectReader:
     def __add_module(self, path: Path, using_entity: EntitySearchingResult):
         module_name = self._generate_module_name(path)
         src_module_name = self._generate_module_name(using_entity.src_module_path)
-        logger.info(f"QQQQ {module_name} {using_entity}")
         if module_name == src_module_name:
             if module_name not in self.__all_modules:
                 self.__all_modules[module_name] = PythonModule(
