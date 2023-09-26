@@ -51,7 +51,7 @@ class ProjectReader:
         all_entities = get_all_entities(self.__root_path)
         for path in self._get_python_files():
             for using_entity in all_entities:
-                if self.__is_ex_lib(using_entity.src_module_name):
+                if self.__is_ex_lib(using_entity):
                     continue
                 for using_module_path in using_entity.using_modules_paths:
                     if using_module_path == path:
@@ -83,8 +83,9 @@ class ProjectReader:
             self.__root_path / "main.py"
         }
 
-    def __is_ex_lib(self, module_name: str) -> bool:
+    def __is_ex_lib(self, entity: EntitySearchingResult) -> bool:
         try:
+            module_name = self._generate_module_name(entity.src_module_path)
             return module_name.split(".")[0] in self.__ex_libs
         except Exception:
             return True
