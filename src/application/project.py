@@ -4,7 +4,7 @@ from functools import cached_property
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
+from typing import NamedTuple, TypeAlias
 from dataclasses import asdict
 
 ModuleName: TypeAlias = str
@@ -18,19 +18,24 @@ class EntityKind(Enum):
     VARIABLE = "variable"
 
 
+class Entity(NamedTuple):
+    name: EntityName
+    kind: EntityKind
+
+
 @dataclass
 class PythonModule:
     name: str
     path: Path
-    imported_entities: dict[ModuleName, set[tuple[EntityKind, EntityName]]]
-    exported_entities: set[EntityName]
+    imported_entities: dict[ModuleName, set[Entity]]
+    exported_entities: set[Entity]
 
     def to_dict(self):
         return asdict(self)
 
     @property
     def full_instability(self):
-        """Возвращает неустойчивость модуля по всем сущностям в нем."""
+        """Неустойчивость модуля по всем сущностям в нем."""
         fan_out = len(self.exported_entities)
         fan_in = sum(
             [len(self.imported_entities.get(m)) for m in self.imported_entities]
@@ -42,10 +47,12 @@ class PythonModule:
 
     @cached_property
     def abstractness(self):
-        num_classes = self._num_occurrences(self.path, "class", ["    class Config:"])
-        num_abs_classes = self._num_occurrences(self.path, "ABC") - 1
-        if num_abs_classes < 0:
-            num_abs_classes = 0
+        num_classes = len(
+            [c for c in self.exported_entities if c.kind == EntityKind.CLASS]
+        )
+        num_abs_classes = len(
+            [c for c in self.exported_entities if c.kind == EntityKind.ABSTRACT]
+        )
         try:
             return num_abs_classes / num_classes
         except ZeroDivisionError:

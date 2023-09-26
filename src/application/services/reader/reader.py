@@ -1,5 +1,5 @@
 from loguru import logger
-from src.application.project import PythonProject, PythonModule, ModuleName
+from src.application.project import PythonProject, PythonModule, ModuleName, Entity
 import tomli
 from functools import lru_cache
 import sys
@@ -39,19 +39,21 @@ class ProjectReader:
                 name=module_name,
                 path=path.relative_to(self.__root_path),
                 imported_entities={
-                    src_module_name: set([(using_entity.kind, using_entity.name)])
+                    src_module_name: set(
+                        [Entity(name=using_entity.name, kind=using_entity.kind)]
+                    )
                 },
                 exported_entities=set(),
             )
         else:
             if src_module_name in self.__all_modules[module_name].imported_entities:
                 self.__all_modules[module_name].imported_entities[src_module_name].add(
-                    (using_entity.kind, using_entity.name)
+                    Entity(name=using_entity.name, kind=using_entity.kind)
                 )
             else:
                 self.__all_modules[module_name].imported_entities[
                     src_module_name
-                ] = set([(using_entity.kind, using_entity.name)])
+                ] = set([Entity(name=using_entity.name, kind=using_entity.kind)])
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
         all_entities = get_all_entities(self.__root_path)
