@@ -25,6 +25,8 @@ class UmlDrawer:
             f"Path: {module.path} \\n"
             f"I = {module.full_instability} \\n"
             f"A = {module.abstractness} \\n"
+            f"I = {module.class_instability} \\n"
+            f"D = {module.distance} \\n"
             f"++++++++ \\n"
             f"External used entities: {module.exported_entities} \\n"
             f"Imported entities: {module.imported_entities} \\n"
