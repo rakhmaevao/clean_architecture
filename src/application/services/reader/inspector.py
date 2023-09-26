@@ -19,7 +19,6 @@ class EntitySearchingResult:
     name: EntityName
     kind: EntityKind
     src_module_path: Path
-    src_module_name: str
     using_modules_paths: set[Path]
 
 
@@ -32,15 +31,13 @@ class EntitiesSearchingResultVault:
         entity_name: EntityName,
         entity_type: EntityKind,
         src_module_path: Path | None,
-        using_path: Path,
-        src_module_name: str | None,
+        using_path: Path
     ):
         if entity_name not in self.entities:
             self.entities[entity_name] = EntitySearchingResult(
                 name=entity_name,
                 kind=entity_type,
                 src_module_path=src_module_path,
-                src_module_name=src_module_name,
                 using_modules_paths=set([using_path]),
             )
         else:
@@ -73,7 +70,6 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
                         entities.add(
                             entity_name=name,
                             entity_type=EntityKind.CLASS,
-                            src_module_name=inspect.getmodule(obj).__name__,
                             src_module_path=Path(inspect.getfile(obj)),
                             using_path=Path(os.path.join(root, file)),
                         )
@@ -81,7 +77,6 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
                         entities.add(
                             entity_name=name,
                             entity_type=EntityKind.FUNCTION,
-                            src_module_name=inspect.getmodule(obj).__name__,
                             src_module_path=Path(inspect.getfile(obj)),
                             using_path=Path(os.path.join(root, file)),
                         )
@@ -89,7 +84,6 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
                         entities.add(
                             entity_name=name,
                             entity_type=EntityKind.VARIABLE,
-                            src_module_name=None,
                             src_module_path=None,
                             using_path=Path(os.path.join(root, file)),
                         )
