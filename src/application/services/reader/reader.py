@@ -94,6 +94,8 @@ class ProjectReader:
     def __is_ex_lib(self, entity: EntitySearchingResult) -> bool:
         try:
             module_name = self._generate_module_name(entity.src_module_path)
+            if module_name.startswith("."):
+                return True
             return module_name.split(".")[0] in self.__ex_libs
         except Exception:
             return True
