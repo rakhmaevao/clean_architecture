@@ -1,6 +1,7 @@
 import inspect
 import json
 import os
+from pathlib import Path
 import sys
 from importlib import import_module
 from typing import TypeAlias, NamedTuple
@@ -39,10 +40,13 @@ class _EntitiesSearchingResultVault:
     def values(self) -> list[_EntitySearchingResult]:
         return list(self.entities.values())
 
+IGNORE_PATHS = (".venv", "tests")
 
 if __name__ == "__main__":
     entities = _EntitiesSearchingResultVault()
-    for root, _, files in os.walk("src"):
+    for root, _, files in os.walk(os.getcwd()):
+        if any([Path(root).is_relative_to(Path.cwd() / Path(i_path)) for i_path in IGNORE_PATHS]):
+            continue
         for file in files:
             if file.endswith(".py"):
                 sys.path.append(root)
