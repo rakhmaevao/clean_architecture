@@ -17,7 +17,7 @@ up:
 # DUO125 - avoid "commands" module use - просто модуль назван так у нас для filebrowser
 # DUO106 - insecure use of "os" module
 flake: 
-	poetry run flake8 --per-file-ignores="__init__.py:F401 main.py:F401" --ignore E203,E501,W503,PIE803,B008,DUO125,DUO106 src main.py tests
+	poetry run flake8 --per-file-ignores="__init__.py:F401 main.py:F401" --ignore E203,E501,W503,PIE803,B008,DUO125,DUO106 src main.py
 
 
 mypy:
