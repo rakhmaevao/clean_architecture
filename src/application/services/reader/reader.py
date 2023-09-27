@@ -4,7 +4,7 @@ import tomli
 from functools import lru_cache
 import sys
 from pathlib import Path
-from src.application.services.reader.inspector import (
+from src.application.services.reader.entity_searcher import (
     EntitySearchingResult,
     get_all_entities,
 )
