@@ -12,7 +12,7 @@ _EntityName: TypeAlias = str
 class _EntitySearchingResult(NamedTuple):
     name: _EntityName
     kind: str
-    src_module_path: str
+    src_module_path: str | None
     using_modules_paths: list[str]
 
 

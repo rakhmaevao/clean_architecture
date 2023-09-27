@@ -37,7 +37,10 @@ class PythonModule:
         """Неустойчивость модуля по всем сущностям в нем."""
         fan_out = len(self.exported_entities)
         fan_in = sum(
-            [len(self.imported_entities.get(m)) for m in self.imported_entities]
+            [
+                len(self.imported_entities[module_name])
+                for module_name in self.imported_entities.keys()
+            ]
         )
         try:
             return fan_out / (fan_in + fan_out)
@@ -57,12 +60,13 @@ class PythonModule:
             [
                 len(
                     [
-                        c
-                        for c in self.imported_entities.get(m)
-                        if c.kind == EntityKind.CLASS or c.kind == EntityKind.ABSTRACT
+                        class_entity
+                        for class_entity in self.imported_entities[module_name]
+                        if class_entity.kind == EntityKind.CLASS
+                        or class_entity.kind == EntityKind.ABSTRACT
                     ]
                 )
-                for m in self.imported_entities
+                for module_name in self.imported_entities.keys()
             ]
         )
         try:

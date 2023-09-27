@@ -16,7 +16,7 @@ EntityName: TypeAlias = str
 class EntitySearchingResult:
     name: EntityName
     kind: EntityKind
-    src_module_path: Path
+    src_module_path: Path | None
     using_modules_paths: set[Path]
 
 
@@ -28,7 +28,7 @@ class EntitiesSearchingResultVault:
         self,
         entity_name: EntityName,
         entity_type: EntityKind,
-        src_module_path: Path | None,
+        src_module_path: Path,
         using_path: Path,
     ):
         if entity_name not in self.entities:
