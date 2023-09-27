@@ -5,3 +5,9 @@ __pycache__
 *.svg
 *.html
 *.js
+/.idea
+/Dash_files
+/assets
+/.pytest_cache
+.venv
+.mypy_cache
