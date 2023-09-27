@@ -53,7 +53,7 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
     entities = _set_abc(entities)
     logger.info("Abstract classes parsed.")
     logger.info("All entities parsed.")
-    logger.debug(f"{entities=}")
+    logger.debug(f"Parsed entities:\n{entities}")
     return entities
 
 
@@ -68,6 +68,8 @@ def _get_raw_entities(project_path: Path) -> list[EntitySearchingResult]:
         capture_output=True,
         cwd=project_path,
     )
+    if results.returncode:
+        logger.error(f"Error in inspection: {results.stderr}")
     return [
         EntitySearchingResult(
             name=r[0],

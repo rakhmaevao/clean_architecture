@@ -40,17 +40,25 @@ class _EntitiesSearchingResultVault:
     def values(self) -> list[_EntitySearchingResult]:
         return list(self.entities.values())
 
+
 IGNORE_PATHS = (".venv", "tests")
 
 if __name__ == "__main__":
     entities = _EntitiesSearchingResultVault()
     for root, _, files in os.walk(os.getcwd()):
-        if any([Path(root).is_relative_to(Path.cwd() / Path(i_path)) for i_path in IGNORE_PATHS]):
+        if any(
+            [
+                Path(root).is_relative_to(Path.cwd() / Path(i_path))
+                for i_path in IGNORE_PATHS
+            ]
+        ):
             continue
         for file in files:
             if file.endswith(".py"):
                 sys.path.append(root)
                 module_name = os.path.splitext(file)[0]
+                if module_name == "__init__":
+                    module_name = os.path.basename(root)
                 try:
                     for name, obj in inspect.getmembers(import_module(module_name)):
                         if inspect.ismodule(obj):
@@ -80,6 +88,9 @@ if __name__ == "__main__":
                                 src_module_path=None,
                                 using_path=os.path.join(root, file),
                             )
-                except ImportError:
-                    print(f"Error importing module {module_name}", file=sys.stderr)
+                except ImportError as error:
+                    print(
+                        f"Error importing module {module_name}.\n{error}",
+                        file=sys.stderr,
+                    )
     print(json.dumps(entities.entities))

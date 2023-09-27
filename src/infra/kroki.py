@@ -15,7 +15,9 @@ def _draw_plantuml(code: str) -> bytes:
     if response.status_code == 400:
         logger.error(f"Request GET failed {response.status_code} for uml code:\n{code}")
     if response.status_code != 200:
-        raise RuntimeError(f"Request GET failed {response.status_code}\n{response.content.decode('utf-8')}")
+        raise RuntimeError(
+            f"Request GET failed {response.status_code}\n{response.content.decode('utf-8')}"
+        )
     return response.content
 
 

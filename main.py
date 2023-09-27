@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pprint import pprint
 from loguru import logger
+
 # from src.application.services.metrics import compute_metrics
 from src.application.services.reader.reader import ProjectReader
 from src.application.services.uml import UmlDrawer
@@ -25,7 +26,7 @@ for project_name, path in projects.items():
     # print(metrics)
     # print(f"{project_name}: {metrics}")
     # pprint(project)
-    
+
     uml_drawer = UmlDrawer()
     uml_drawer.draw(
         project,
