@@ -1,7 +1,5 @@
-from loguru import logger
 from src.application.project import PythonProject, PythonModule, ModuleName, Entity
 import tomli
-from functools import lru_cache
 import sys
 from pathlib import Path
 from src.application.services.reader.entity_searcher import (
@@ -31,7 +29,7 @@ class ProjectReader:
                 self.__all_modules[module_name] = PythonModule(
                     name=module_name,
                     path=path.relative_to(self.__root_path),
-                    imported_entities=dict(),
+                    imported_entities={},
                     exported_entities=set(),
                 )
         elif module_name not in self.__all_modules:
@@ -39,9 +37,9 @@ class ProjectReader:
                 name=module_name,
                 path=path.relative_to(self.__root_path),
                 imported_entities={
-                    src_module_name: set(
-                        [Entity(name=using_entity.name, kind=using_entity.kind)]
-                    )
+                    src_module_name: {
+                        Entity(name=using_entity.name, kind=using_entity.kind)
+                    }
                 },
                 exported_entities=set(),
             )
@@ -51,9 +49,9 @@ class ProjectReader:
                     Entity(name=using_entity.name, kind=using_entity.kind)
                 )
             else:
-                self.__all_modules[module_name].imported_entities[
-                    src_module_name
-                ] = set([Entity(name=using_entity.name, kind=using_entity.kind)])
+                self.__all_modules[module_name].imported_entities[src_module_name] = {
+                    Entity(name=using_entity.name, kind=using_entity.kind)
+                }
 
     def __read_py_modules(self) -> dict[ModuleName, PythonModule]:
         all_entities = get_all_entities(self.__root_path)
@@ -70,7 +68,7 @@ class ProjectReader:
     def __set_exported_relationships(self):
         for module in self.__all_modules.values():
             for other_module in self.__all_modules.values():
-                if module.name in other_module.imported_entities.keys():
+                if module.name in other_module.imported_entities:
                     module.exported_entities |= other_module.imported_entities[
                         module.name
                     ]
@@ -87,7 +85,7 @@ class ProjectReader:
         return m_name
 
     def _get_python_files(self) -> set[Path]:
-        return {path for path in (self.__root_path / "src").rglob("*.py")} | {
+        return set((self.__root_path / "src").rglob("*.py")) | {
             self.__root_path / "main.py"
         }
 
@@ -97,10 +95,9 @@ class ProjectReader:
             if module_name.startswith("."):
                 return True
             return module_name.split(".")[0] in self.__ex_libs
-        except Exception:
+        except Exception:  # noqa: PIE786
             return True
 
-    @lru_cache
     def __read_used_libraries(self) -> set[str]:
         with open(self.__root_path / "poetry.lock", "rb") as f:
             poetry_lock = tomli.load(f)["package"]

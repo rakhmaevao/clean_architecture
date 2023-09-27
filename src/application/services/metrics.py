@@ -12,15 +12,15 @@ def compute_metrics(project: PythonProject) -> pd.DataFrame:
         [
             pd.DataFrame(
                 {
-                    # "component": [module.name],
+                    "component": [module.name],
                     "I": [module.full_instability],
-                    # "A": [module.abstractness],
-                    # "D": [module.distance],
+                    "A": [module.abstractness],
+                    "D": [module.distance],
                 }
             )
             for module in project.modules.values()
         ],
-        # ignore_index=True,
+        ignore_index=True,
     )
 
 

@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 from importlib import import_module
 from typing import TypeAlias, NamedTuple
+from contextlib import suppress
 
 _EntityName: TypeAlias = str
 
@@ -18,7 +19,7 @@ class _EntitySearchingResult(NamedTuple):
 
 class _EntitiesSearchingResultVault:
     def __init__(self):
-        self.entities: dict[_EntityName, _EntitySearchingResult] = dict()
+        self.entities: dict[_EntityName, _EntitySearchingResult] = {}
 
     def add(
         self,
@@ -47,10 +48,8 @@ if __name__ == "__main__":
     entities = _EntitiesSearchingResultVault()
     for root, _, files in os.walk(os.getcwd()):
         if any(
-            [
-                Path(root).is_relative_to(Path.cwd() / Path(i_path))
-                for i_path in IGNORE_PATHS
-            ]
+            Path(root).is_relative_to(Path.cwd() / Path(i_path))
+            for i_path in IGNORE_PATHS
         ):
             continue
         for file in files:
@@ -65,15 +64,13 @@ if __name__ == "__main__":
                             # TODO: Для случая form pkg import module
                             pass
                         if inspect.isclass(obj):
-                            try:
+                            with suppress(TypeError):
                                 entities.add(
                                     entity_name=name,
                                     entity_type="class",
                                     src_module_path=inspect.getfile(obj),
                                     using_path=os.path.join(root, file),
                                 )
-                            except TypeError:
-                                pass
                         elif inspect.isfunction(obj):
                             entities.add(
                                 entity_name=name,

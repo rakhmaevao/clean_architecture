@@ -12,17 +12,6 @@ files = [
 ]
 
 [[package]]
-name = "astroid"
-version = "3.0.0"
-description = "An abstract syntax tree for Python with inference support."
-optional = false
-python-versions = ">=3.8.0"
-files = [
-    {file = "astroid-3.0.0-py3-none-any.whl", hash = "sha256:f2510e7fdcd6cfda4ec50014726d4857abf79acfc010084ce8c26091913f1b25"},
-    {file = "astroid-3.0.0.tar.gz", hash = "sha256:1defdbca052635dd29657ea674edfc45e4b5be9cd53630c5b084fcfed94344a8"},
-]
-
-[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -386,24 +375,6 @@ astor = ">=0.1"
 flake8 = ">=3.7"
 
 [[package]]
-name = "flake8-warnings"
-version = "0.4.0"
-description = "Linter (flake8, pylint, custom CLI) for finding usage of deprecated functions."
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "flake8-warnings-0.4.0.tar.gz", hash = "sha256:d2d0990a2d58222918c278c9494e0c6c8ee833806a45e1cea30dc1eedd6fc31e"},
-    {file = "flake8_warnings-0.4.0-py3-none-any.whl", hash = "sha256:bb36a5ebd383ab70901943af2ebdc5e6108433e6442ef1b851f79e5ff28809e3"},
-]
-
-[package.dependencies]
-astroid = "*"
-
-[package.extras]
-lint = ["flake8-length", "isort", "mypy"]
-test = ["pytest"]
-
-[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -745,4 +716,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "e457c38ffa4542abf2e95a1c29d415f20f06fd8b24cfa54552bfdfb4fc6d6ace"
+content-hash = "5a87d18e75c103933a0b91b40a99461d7f0f3aff4b012d806b3deedeb6d61a02"

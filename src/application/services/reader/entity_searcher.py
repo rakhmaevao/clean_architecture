@@ -22,7 +22,7 @@ class EntitySearchingResult:
 
 class EntitiesSearchingResultVault:
     def __init__(self):
-        self.entities: dict[EntityName, EntitySearchingResult] = dict()
+        self.entities: dict[EntityName, EntitySearchingResult] = {}
 
     def add(
         self,
@@ -36,7 +36,7 @@ class EntitiesSearchingResultVault:
                 name=entity_name,
                 kind=entity_type,
                 src_module_path=src_module_path,
-                using_modules_paths=set([using_path]),
+                using_modules_paths={using_path},
             )
         else:
             self.entities[entity_name].using_modules_paths.add(using_path)
@@ -49,7 +49,7 @@ def get_all_entities(project_path: Path) -> list[EntitySearchingResult]:
     entities = _get_raw_entities(project_path)
     logger.info("All entities found.")
     entities = _set_src_for_globals(entities, project_path)
-    logger.info(f"Globals parsed.")
+    logger.info("Globals parsed.")
     entities = _set_abc(entities)
     logger.info("Abstract classes parsed.")
     logger.info("All entities parsed.")
@@ -119,56 +119,11 @@ def _set_abc(entities: list[EntitySearchingResult]) -> list[EntitySearchingResul
             code = file.read()
         tree = ast.parse(code)
         for node in ast.walk(tree):
-            if isinstance(node, ast.ClassDef) and node.name == entity.name:
-                if any([n.id == "ABC" for n in node.bases if isinstance(n, ast.Name)]):
-                    entity.kind = EntityKind.ABSTRACT
+            if (
+                isinstance(node, ast.ClassDef)
+                and node.name == entity.name
+                and any(n.id == "ABC" for n in node.bases if isinstance(n, ast.Name))
+            ):
+                entity.kind = EntityKind.ABSTRACT
 
     return entities
-
-
-# [
-#     EntitySearchingResult(
-#         name="Config",
-#         kind="class",
-#         src_module_path=PosixPath(
-#             "/home/rahmaevao/Projects/clean_architecture/tests/mock_component/src/config.py"
-#         ),
-#         using_modules_paths={PosixPath("src/config.py")},
-#     ),
-#     EntitySearchingResult(
-#         name="dataclass",
-#         kind="function",
-#         src_module_path=PosixPath("/usr/lib/python3.10/dataclasses.py"),
-#         using_modules_paths={PosixPath("src/config.py")},
-#     ),
-#     EntitySearchingResult(
-#         name="SomeModel",
-#         kind="class",
-#         src_module_path=PosixPath(
-#             "/home/rahmaevao/Projects/clean_architecture/tests/mock_component/src/application/models.py"
-#         ),
-#         using_modules_paths={PosixPath("src/application/models.py")},
-#     ),
-#     EntitySearchingResult(
-#         name="ABC",
-#         kind="class",
-#         src_module_path=PosixPath("/usr/lib/python3.10/abc.py"),
-#         using_modules_paths={PosixPath("src/application/message.py")},
-#     ),
-#     EntitySearchingResult(
-#         name="Message",
-#         kind="class",
-#         src_module_path=PosixPath(
-#             "/home/rahmaevao/Projects/clean_architecture/tests/mock_component/src/application/message.py"
-#         ),
-#         using_modules_paths={PosixPath("src/application/message.py")},
-#     ),
-#     EntitySearchingResult(
-#         name="SomeInterface",
-#         kind="abstract",
-#         src_module_path=PosixPath(
-#             "/home/rahmaevao/Projects/clean_architecture/tests/mock_component/src/application/message.py"
-#         ),
-#         using_modules_paths={PosixPath("src/application/message.py")},
-#     ),
-# ]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 from enum import Enum
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import NamedTuple, TypeAlias
